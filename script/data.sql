@@ -6,12 +6,6 @@ insert into user (user_name, password) values
 insert into profile (user_id, gender, age, address) values
  (1, 'male', 28, '北京');
 
-
-select * from user, profile where user.id = 1;
-
-
-# select * from user left join profile where user.id = 1;
-
 insert into blog (user_id, title, content) values
  (1, 'react入门', 
  "

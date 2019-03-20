@@ -8,7 +8,8 @@ create table user (
     user_name varchar(20) not null,
     password varchar(20) not null,
     time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    primary key (id)
+    primary key (id),
+    UNIQUE KEY (user_name)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table profile (

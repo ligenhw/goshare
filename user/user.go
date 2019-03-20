@@ -1,26 +1,21 @@
 package user
 
 import (
-	"errors"
 	"strconv"
+	"strings"
 	"time"
+
+	"github.com/ligenhw/goshare/store"
 )
 
-var UserList map[string]*User
-
-func init() {
-	UserList = make(map[string]*User)
-	u := User{"user_1111", "gen", "123", Profile{"male", 28, "bj", "ligen@outlook.com"}}
-	u2 := User{"user_2222", "root", "1234", Profile{"female", 22, "sh", "root@gmail.com"}}
-	UserList["user_1111"] = &u
-	UserList["user_2222"] = &u2
-}
+var db = store.Db
 
 type User struct {
-	Id       string
-	UserName string
-	Password string
-	Profile  Profile
+	Id       int       `json:"id"`
+	UserName string    `json:"userName"`
+	Password string    `json:"password"`
+	Time     time.Time `json:"time"`
+	Profile  Profile   `json:"profile"`
 }
 
 type Profile struct {
@@ -30,60 +25,55 @@ type Profile struct {
 	Email   string
 }
 
-func AddUser(u User) string {
-	u.Id = "user_" + strconv.FormatInt(time.Now().UnixNano(), 10)
-	UserList[u.Id] = &u
-	return u.Id
+func (u *User) Create() (err error) {
+	_, err = db.Exec("INSERT INTO user (user_name, password) VALUES (?, ?)", u.UserName, u.Password)
+	return
 }
 
-func GetUser(uid string) (*User, error) {
-	if user, ok := UserList[uid]; ok {
-		return user, nil
+// delete by Id
+func (u *User) Delete() (err error) {
+	_, err = db.Exec("DELETE FROM user where id = ?", u.Id)
+	return
+}
+
+// update by id
+func (u *User) Update() (err error) {
+	var columes []string
+	var args []interface{}
+	if u.UserName != "" {
+		columes = append(columes, "user_name = ?")
+		args = append(args, u.UserName)
 	}
-
-	return nil, errors.New("User does not exists.")
-}
-
-func GetAllUser() map[string]*User {
-	return UserList
-}
-
-func UpdateUser(uid string, uu *User) (*User, error) {
-	if u, ok := UserList[uid]; ok {
-		if uu.UserName != "" {
-			u.UserName = uu.UserName
-		}
-		if uu.Password != "" {
-			u.Password = uu.Password
-		}
-		if uu.Profile.Age != 0 {
-			u.Profile.Age = uu.Profile.Age
-		}
-		if uu.Profile.Address != "" {
-			u.Profile.Address = uu.Profile.Address
-		}
-		if uu.Profile.Gender != "" {
-			u.Profile.Gender = uu.Profile.Gender
-		}
-		if uu.Profile.Email != "" {
-			u.Profile.Email = uu.Profile.Email
-		}
-		return u, nil
+	if u.Password != "" {
+		columes = append(columes, "password = ?")
+		args = append(args, u.Password)
 	}
-
-	return nil, errors.New("User not exists")
-}
-
-func Login(username, password string) bool {
-	for _, u := range UserList {
-		if u.UserName == username && u.Password == password {
-			return true
-		}
+	if len(columes) > 0 {
+		sql := strings.Join(columes, ",")
+		args = append(args, strconv.Itoa(u.Id))
+		update := "UPDATE user SET " + sql + " WHERE id = ?"
+		_, err = db.Exec(update, args...)
+		return
+	} else {
+		return nil
 	}
-
-	return false
 }
 
-func DeleteUser(uid string) {
-	delete(UserList, uid)
+// query by UserName
+func (u *User) Query() (err error) {
+	err = db.QueryRow("SELECT id, user_name, password, time FROM user WHERE user_name = ?", u.UserName).Scan(&u.Id, &u.UserName, &u.Password, &u.Time)
+	return
+}
+
+func GetAllUser() (users []*User, err error) {
+	rows, err := db.Query("SELECT id, user_name, password, time FROM user")
+	if err != nil {
+		return
+	}
+	for rows.Next() {
+		u := User{}
+		rows.Scan(&u.Id, &u.UserName, &u.Password, &u.Time)
+		users = append(users, &u)
+	}
+	return
 }
