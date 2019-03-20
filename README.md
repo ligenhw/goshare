@@ -14,7 +14,10 @@ go get -u github.com/ligenhw/goshare
 * 评论
 * 视频分享
 
-## ⚙️ 配置
+* 博客迁移
+* 博客爬虫
 
+## ⚙️ 配置
+GOOS=linux GOARCH=amd64 go build 
 
 

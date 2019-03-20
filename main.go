@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	_ "github.com/ligenhw/goshare/health/api"
@@ -10,8 +9,6 @@ import (
 )
 
 func main() {
-	fmt.Println("version : " + version.Version)
-
-	http.Handle("/", http.FileServer(http.Dir(".")))
-	http.ListenAndServe(":5001", nil)
+	p("Go share", version.Version, "started at", config.Address)
+	http.ListenAndServe(config.Address, nil)
 }

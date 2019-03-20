@@ -12,11 +12,7 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodGet {
 		users := user.GetAllUser()
 		if b, err := json.Marshal(users); err == nil {
-			if _, err := w.Write(b); err != nil {
-				w.WriteHeader(http.StatusOK)
-			} else {
-				w.WriteHeader(http.StatusInternalServerError)
-			}
+			w.Write(b)
 		} else {
 			log.Panicln(err)
 		}
