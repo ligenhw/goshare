@@ -1,0 +1,153 @@
+{
+	"variables": [],
+	"info": {
+		"name": "goshare",
+		"_postman_id": "9e01daa4-72e4-cf42-b901-5cde9c672d99",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "get users",
+			"request": {
+				"url": "http://localhost:8080/user",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "get blogs",
+			"request": {
+				"url": "http://localhost:8080/blog/",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "create user",
+			"request": {
+				"url": "http://localhost:8080/user/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"userName\": \"gen\",\n    \"password\": \"123\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "create blog",
+			"request": {
+				"url": "http://localhost:8080/blog/",
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"user_id\": 1,\n        \"title\": \"for teset title\",\n        \"content\": \"just for test content\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "update user",
+			"request": {
+				"url": "http://localhost:8080/user",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": 2,\n    \"userName\": \"gen\",\n    \"password\": \"changeme123\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "update blog",
+			"request": {
+				"url": "http://localhost:8080/blog/",
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"id\": 5,\n        \"title\": \"short title\",\n        \"content\": \"just for test content , add something to content!!!\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "delete user",
+			"request": {
+				"url": "http://localhost:8080/user/2",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"userName\": \"gen1\",\n        \"password\": \"xxx\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "delete blog",
+			"request": {
+				"url": "http://localhost:8080/blog/4",
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"description": ""
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n        \"userName\": \"gen1\",\n        \"password\": \"xxx\"\n}"
+				},
+				"description": ""
+			},
+			"response": []
+		}
+	]
+}
