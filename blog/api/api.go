@@ -12,14 +12,23 @@ import (
 
 // /user
 func Get(w http.ResponseWriter, r *http.Request) (err error) {
-	blogs, err := blog.GetAllBlogs()
-	if err != nil {
-		return
-	}
+	var result interface{}
+	id, err := strconv.Atoi(path.Base(r.URL.Path))
 
 	w.Header().Set("Content-Type", "application/json")
+	if err == nil {
+		blog := &blog.Blog{Id: id}
+		blog.Query()
+		result = blog
+	} else {
+		result, err = blog.GetAllBlogs()
+		if err != nil {
+			return err
+		}
+	}
+
 	encoder := json.NewEncoder(w)
-	err = encoder.Encode(blogs)
+	err = encoder.Encode(result)
 	return
 }
 
@@ -82,5 +91,5 @@ func BlogHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	http.HandleFunc("/blog/", BlogHandler)
+	http.HandleFunc("/api/blog/", BlogHandler)
 }
