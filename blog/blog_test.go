@@ -2,6 +2,7 @@ package blog
 
 import (
 	"io/ioutil"
+	"strings"
 	"testing"
 )
 
@@ -35,7 +36,7 @@ func TestCreateFromFile(t *testing.T) {
 		t.Log("info ", info.Name())
 		name := info.Name()
 		if content, err := ioutil.ReadFile(path + name); err == nil {
-			b := Blog{User_Id: 1, Title: name, Content: string(content)}
+			b := Blog{User_Id: 1, Title: strings.Split(name, ".")[0], Content: string(content)}
 			b.Create()
 		}
 	}
