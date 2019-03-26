@@ -41,7 +41,7 @@ func (b *Blog) Update() (err error) {
 }
 
 func (b *Blog) Query() (err error) {
-	err = db.QueryRow("SELECT id, user_id, title, content, time FROM blog").Scan(&b.Id, &b.User_Id, &b.Title, &b.Content, &b.Time)
+	err = db.QueryRow("SELECT id, user_id, title, content, time FROM blog where id = ?", b.Id).Scan(&b.Id, &b.User_Id, &b.Title, &b.Content, &b.Time)
 	return
 }
 
