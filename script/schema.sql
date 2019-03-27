@@ -26,7 +26,7 @@ create table profile (
 create table blog (
     id Int auto_increment,
     user_id Int,
-    title varchar(20) not null,
+    title varchar(60) not null,
     content mediumtext not null,
     time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
@@ -38,7 +38,7 @@ create table comment (
     id Int auto_increment,
     blog_id Int,
     user_id Int,
-    content varchar(40),
+    content varchar(500),
     time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (blog_id) REFERENCES blog(id) ON DELETE CASCADE,

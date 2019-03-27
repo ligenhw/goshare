@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/ligenhw/goshare/blog"
@@ -40,6 +41,7 @@ func usage() {
 	fmt.Fprint(os.Stderr, `
 Scan the md files and Insert to blog table
 maybe insert as user 1.
+eg: db -d ../../script/testdata/
 `)
 	flag.PrintDefaults()
 }
@@ -61,26 +63,37 @@ func main() {
 		scanDir(dir.String())
 	}
 
+	if flag.NArg() > 0 {
+		for _, file := range flag.Args() {
+			if err := scanFile(file); err != nil {
+				panic(err)
+			}
+		}
+	}
 }
 
 func scanDir(path string) {
-	// path := "../../script/testdata/"
 	infos, err := ioutil.ReadDir(path)
 	if err != nil {
 		panic(err)
 	}
 
 	for _, info := range infos {
-		log.Println("info ", info.Name())
 		name := info.Name()
-		scanFile(path, name)
+		err := scanFile(filepath.Join(path, name))
+		if err != nil {
+			panic(err)
+		}
 	}
 }
 
-func scanFile(path, name string) (err error) {
-	if content, err := ioutil.ReadFile(path + name); err == nil {
+func scanFile(path string) (err error) {
+	var content []byte
+	if content, err = ioutil.ReadFile(path); err == nil {
+		name := filepath.Base(path)
+		log.Println("scan file : ", name)
 		b := blog.Blog{User_Id: 1, Title: strings.Split(name, ".")[0], Content: string(content)}
-		b.Create()
+		err = b.Create()
 	}
 
 	return

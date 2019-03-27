@@ -9,7 +9,7 @@ import (
 type Blog struct {
 	Id      int       `json:"id"`
 	User_Id int       `json:"user_id"`
-	Title  string    `json:"title"`
+	Title   string    `json:"title"`
 	Content string    `json:"content"`
 	Time    time.Time `json:"time"`
 }
@@ -46,7 +46,7 @@ func (b *Blog) Query() (err error) {
 }
 
 func GetAllBlogs() (blogs []*Blog, err error) {
-	rows, err := db.Query("SELECT id, user_id, title, content, time FROM blog")
+	rows, err := db.Query("SELECT id, user_id, title, content, time FROM blog ORDER BY time DESC")
 	if err != nil {
 		return
 	}
