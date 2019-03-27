@@ -82,5 +82,5 @@ func UserHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func init() {
-	http.HandleFunc("/user/", UserHandler)
+	http.HandleFunc("/api/user/", UserHandler)
 }
