@@ -30,6 +30,7 @@ func Post(w http.ResponseWriter, r *http.Request) (err error) {
 	u := user.User{}
 	err = decoder.Decode(&u)
 	if err != nil {
+		log.Println(err)
 		return
 	}
 	err = u.Create()
