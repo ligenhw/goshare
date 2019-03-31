@@ -7,6 +7,8 @@ import (
 	"path"
 	"strconv"
 
+	"github.com/ligenhw/goshare/session"
+
 	"github.com/ligenhw/goshare/blog"
 )
 
@@ -90,6 +92,21 @@ func BlogHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func WithSession(handler http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		session, err := globalSession.SessionStart(w, r)
+		if err != nil {
+			panic(err)
+		}
+		log.Println(session)
+		handler(w, r)
+	}
+}
+
+var globalSession *session.Manager
+
 func init() {
-	http.HandleFunc("/api/blog/", BlogHandler)
+	globalSession, _ = session.NewManager("mem")
+	go globalSession.GC()
+	http.HandleFunc("/api/blog/", WithSession(BlogHandler))
 }
