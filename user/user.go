@@ -65,6 +65,12 @@ func (u *User) Query() (err error) {
 	return
 }
 
+// query by UserName
+func (u *User) QueryByID() (err error) {
+	err = db.QueryRow("SELECT id, user_name, password, time FROM user WHERE id = ?", u.Id).Scan(&u.Id, &u.UserName, &u.Password, &u.Time)
+	return
+}
+
 func GetAllUser() (users []*User, err error) {
 	rows, err := db.Query("SELECT id, user_name, password, time FROM user")
 	if err != nil {

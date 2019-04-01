@@ -60,7 +60,7 @@ func (pder *MemProvider) SessionInit(maxlifetime int64) error {
 	return nil
 }
 
-func (pder *MemProvider) SessionRead(sid string) (session Store, err error) {
+func (pder *MemProvider) SessionRead(sid string) (Store, error) {
 	pder.lock.RLock()
 	if element, ok := pder.sessions[sid]; ok {
 		go pder.SessionUpdte(sid)

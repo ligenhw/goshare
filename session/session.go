@@ -66,7 +66,7 @@ func NewManager(provideName string) (*Manager, error) {
 		Instance = &Manager{
 			provider:       provider,
 			CookieName:     "sessionId",
-			CookieLifeTime: 3600,
+			CookieLifeTime: 3600 * 24 * 7,
 			Maxlifetime:    defaultTime,
 			Gclifetime:     defaultTime,
 		}

@@ -7,19 +7,37 @@ import (
 	"path"
 	"strconv"
 
+	"github.com/ligenhw/goshare/auth"
+
+	"github.com/ligenhw/goshare/session"
 	"github.com/ligenhw/goshare/user"
 )
 
 // /user
 func Get(w http.ResponseWriter, r *http.Request) (err error) {
-	users, err := user.GetAllUser()
+	globalSession := session.Instance
+
+	var session session.Store
+	session, err = globalSession.SessionStart(w, r)
+	if err != nil {
+		return
+	}
+
+	var userID int
+	userID, err = auth.Auth(session)
+	if err != nil {
+		return
+	}
+
+	user := user.User{Id: userID}
+	err = user.QueryByID()
 	if err != nil {
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	encoder := json.NewEncoder(w)
-	err = encoder.Encode(users)
+	err = encoder.Encode(user)
 	return
 }
 
