@@ -20,5 +20,14 @@ func TestCreate(t *testing.T) {
 	t.Log("Update : ", b.Update())
 
 	t.Log("Delete : ", b.Delete())
+}
 
+func TestBlogDetails(t *testing.T) {
+	bd := BlogDetail{
+		Blog: Blog{
+			Id: 55,
+		},
+	}
+	t.Log(bd.QueryByID())
+	t.Log(bd)
 }

@@ -19,9 +19,11 @@ func Get(w http.ResponseWriter, r *http.Request) (err error) {
 
 	w.Header().Set("Content-Type", "application/json")
 	if err == nil {
-		blog := &blog.Blog{Id: id}
-		blog.Query()
-		result = blog
+		bd := &blog.BlogDetail{
+			Blog: blog.Blog{Id: id},
+		}
+		bd.QueryByID()
+		result = bd
 	} else {
 		result, err = blog.GetAllBlogs()
 		if err != nil {
