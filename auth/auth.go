@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"log"
 
 	"github.com/ligenhw/goshare/session"
 
@@ -36,9 +35,13 @@ func Login(username, password string, session session.Store) (err error) {
 	return
 }
 
+func Logout(session session.Store) (err error) {
+	err = session.Delete("userID")
+	return
+}
+
 func Auth(session session.Store) (userID int, err error) {
 	value := session.Get("userID")
-	log.Println("****")
 	if value == nil || value.(int) == 0 {
 		err = ErrorAuthFailed
 		return

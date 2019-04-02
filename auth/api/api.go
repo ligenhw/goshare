@@ -35,6 +35,19 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func handleLogout(w http.ResponseWriter, r *http.Request) {
+	session, err := session.Instance.SessionStart(w, r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	err = auth.Logout(session)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+}
+
 func init() {
 	http.HandleFunc("/api/login/", handleLogin)
+	http.HandleFunc("/api/logout/", handleLogout)
 }
