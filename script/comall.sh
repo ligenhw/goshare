@@ -1,6 +1,8 @@
-git add -A
 
-git ci -m "add author info"
+commitAll() {
+    git add -A
+    git ci -m "add author info"
+    git push
+}
 
-git push
-
+commitAll
