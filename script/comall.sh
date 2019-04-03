@@ -6,3 +6,8 @@ commitAll() {
 }
 
 commitAll
+
+
+test() {
+    go test -v github.com/ligenhw/goshare/blog -run TestBlogDetails
+}

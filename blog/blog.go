@@ -14,13 +14,7 @@ type Blog struct {
 	Time    time.Time `json:"time"`
 }
 
-type Comment struct {
-	Id      string
-	BlogId  string
-	UserId  string
-	Content string
-	Time    time.Time
-}
+
 
 var db = store.Db
 
