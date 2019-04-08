@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 
 	_ "github.com/ligenhw/goshare/auth/api"
@@ -15,6 +16,8 @@ import (
 var globalSession *session.Manager
 
 func init() {
+	log.SetFlags(log.Flags() | log.Llongfile)
+
 	globalSession, _ = session.NewManager("mem")
 	go globalSession.GC()
 }

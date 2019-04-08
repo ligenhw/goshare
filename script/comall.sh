@@ -10,4 +10,5 @@ commitAll
 
 test() {
     go test -v github.com/ligenhw/goshare/blog -run TestBlogDetails
+    go test -v github.com/ligenhw/goshare/orm -run TestReflect
 }

@@ -14,8 +14,6 @@ type Blog struct {
 	Time    time.Time `json:"time"`
 }
 
-
-
 var db = store.Db
 
 func (b *Blog) Create() (err error) {
