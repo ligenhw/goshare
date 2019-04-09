@@ -2,7 +2,6 @@ package orm
 
 import (
 	"fmt"
-	"log"
 	"reflect"
 )
 
@@ -20,10 +19,9 @@ func registerModel(model interface{}) {
 	}
 
 	table := getTableName(ind)
-	name := getFullName(typ)
-	mi := newModelInfo(ind)
-
+	mi := newModelInfo(val)
 	mi.table = table
+	mi.fullName = getFullName(typ)
 
-	log.Println(mi, table, name)
+	modelCache.set(table, mi)
 }

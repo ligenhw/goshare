@@ -1,30 +1,49 @@
 package orm
 
 import (
-	"log"
+	"fmt"
+	"os"
 	"reflect"
 )
 
 type modelInfo struct {
-	name      string
 	fields    []*fieldInfo
 	table     string
+	fullName  string
 	addrField reflect.Value
 }
 
-func newModelInfo(ind reflect.Value) *modelInfo {
-	fields := make([]*fieldInfo, 0)
-	typ := ind.Type()
+func newModelInfo(val reflect.Value) *modelInfo {
+	mi := &modelInfo{}
+	mi.addrField = val
+	ind := reflect.Indirect(val)
+	mi.fields = make([]*fieldInfo, 0)
+	addModelFields(mi, ind)
+	return mi
+}
+
+func addModelFields(mi *modelInfo, ind reflect.Value) {
+	var (
+		err error
+		fi  *fieldInfo
+		sf  reflect.StructField
+	)
+
 	for i := 0; i < ind.NumField(); i++ {
-		sf := typ.Field(i)
-		v := ind.Field(i)
-		fi := newFieldInfo(sf, v)
-		log.Println(*fi)
-		fields = append(fields, fi)
+		sf = ind.Type().Field(i)
+		field := ind.Field(i)
+		fi, err = newFieldInfo(sf, field)
+		if err == errSkipField {
+			err = nil
+			continue
+		} else if err != nil {
+			break
+		}
+		mi.fields = append(mi.fields, fi)
 	}
 
-	return &modelInfo{
-		name:   typ.Name(),
-		fields: fields,
+	if err != nil {
+		fmt.Println(fmt.Errorf("field: %s.%s, %s", ind.Type(), sf.Name, err))
+		os.Exit(2)
 	}
 }

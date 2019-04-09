@@ -46,3 +46,17 @@ create table comment (
     INDEX inx_time (time)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+
+
+
+
+drop table user_info;
+
+create table user_info (
+    id Int auto_increment,
+    user_name varchar(20) not null,
+    pass_word varchar(20) not null,
+    age Int,
+    time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    primary key (id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;

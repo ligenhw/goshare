@@ -2,8 +2,12 @@ package orm
 
 import (
 	"fmt"
+	"log"
 	"reflect"
 	"testing"
+	"time"
+
+	"github.com/ligenhw/goshare/store"
 )
 
 func TestReflect(t *testing.T) {
@@ -23,14 +27,31 @@ func TestReflect(t *testing.T) {
 }
 
 type UserInfo struct {
+	Id       int    `orm:"auto"`
 	UserName string `orm:"varchar(20);pk"`
 	PassWord string `orm:"varchar(100)"`
+	Age      int
+	Time     time.Time `orm:"-"`
 }
 
 func TestOrm(t *testing.T) {
 	u := UserInfo{
 		UserName: "ggg",
 		PassWord: "123",
+		Age:      10,
 	}
 	registerModel(&u)
+
+	db := store.Db
+	o := NewOrm(db)
+
+	id, err := o.Insert(&u)
+	if err != nil {
+		panic(err)
+	}
+	log.Println(id)
+}
+
+func TestOrmQuery(t *testing.T) {
+	u
 }
