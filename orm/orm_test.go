@@ -28,7 +28,7 @@ func TestReflect(t *testing.T) {
 
 type UserInfo struct {
 	Id       int    `orm:"auto"`
-	UserName string `orm:"varchar(20);pk"`
+	UserName string `orm:"varchar(20)"`
 	PassWord string `orm:"varchar(100)"`
 	Age      int
 	Time     time.Time `orm:"-"`
@@ -53,5 +53,37 @@ func TestOrm(t *testing.T) {
 }
 
 func TestOrmQuery(t *testing.T) {
-	u
+	u := UserInfo{
+		Id: 10,
+	}
+	registerModel(&u)
+
+	db := store.Db
+	o := NewOrm(db)
+
+	err := o.Read(&u)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println(u)
+}
+
+func TestOrmQuery1(t *testing.T) {
+	u := UserInfo{
+		Id:       10,
+		UserName: "ggg",
+		Age:      11,
+	}
+	registerModel(&u)
+
+	db := store.Db
+	o := NewOrm(db)
+
+	err := o.Read(&u, "id", "user_name")
+	if err != nil {
+		panic(err)
+	}
+
+	log.Println(u)
 }

@@ -7,6 +7,29 @@ import (
 
 var errSkipField = errors.New("skip field")
 
+type fields struct {
+	pk      *fieldInfo
+	columns map[string]*fieldInfo
+	dbcols  []string
+}
+
+func (f *fields) Add(fi *fieldInfo) {
+	f.columns[fi.column] = fi
+	f.dbcols = append(f.dbcols, fi.column)
+}
+
+// get field info by column name
+func (f *fields) GetByColumn(column string) *fieldInfo {
+	return f.columns[column]
+}
+
+// create new field info collection
+func newFields() *fields {
+	f := new(fields)
+	f.columns = make(map[string]*fieldInfo)
+	return f
+}
+
 type fieldInfo struct {
 	column    string
 	typ       reflect.Type

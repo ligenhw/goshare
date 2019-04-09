@@ -7,7 +7,7 @@ import (
 )
 
 type modelInfo struct {
-	fields    []*fieldInfo
+	fields    *fields
 	table     string
 	fullName  string
 	addrField reflect.Value
@@ -17,7 +17,7 @@ func newModelInfo(val reflect.Value) *modelInfo {
 	mi := &modelInfo{}
 	mi.addrField = val
 	ind := reflect.Indirect(val)
-	mi.fields = make([]*fieldInfo, 0)
+	mi.fields = newFields()
 	addModelFields(mi, ind)
 	return mi
 }
@@ -39,7 +39,17 @@ func addModelFields(mi *modelInfo, ind reflect.Value) {
 		} else if err != nil {
 			break
 		}
-		mi.fields = append(mi.fields, fi)
+
+		mi.fields.Add(fi)
+
+		if fi.pk {
+			if mi.fields.pk != nil {
+				err = fmt.Errorf("one model must have one pk field only")
+				break
+			} else {
+				mi.fields.pk = fi
+			}
+		}
 	}
 
 	if err != nil {

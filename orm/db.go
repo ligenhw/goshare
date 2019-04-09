@@ -2,27 +2,38 @@ package orm
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"reflect"
 	"strings"
 )
 
+var (
+	// ErrMissPK missing pk error
+	ErrMissPK = errors.New("missed pk value")
+)
+
 type dbBase struct {
 }
 
 // get struct columns values as interface slice.
-func (d *dbBase) collectValues(mi *modelInfo, ind reflect.Value, fields []*fieldInfo, names *[]string) (values []interface{}, err error) {
+func (d *dbBase) collectValues(mi *modelInfo, ind reflect.Value, cols []string, skipAuto bool, names *[]string) (values []interface{}, err error) {
 	if names == nil {
-		ns := make([]string, 0, len(fields))
+		ns := make([]string, 0, len(cols))
 		names = &ns
 	}
-	values = make([]interface{}, 0, len(fields))
+	values = make([]interface{}, 0, len(cols))
 
-	for _, fi := range fields {
-		column := fi.column
+	for _, column := range cols {
+		var fi *fieldInfo
+		if fi = mi.fields.GetByColumn(column); fi != nil {
+			column = fi.column
+		} else {
+			panic(fmt.Errorf("wrong db field/column name `%s` for model `%s`", column, mi.fullName))
+		}
 
-		if fi.auto {
+		if fi.auto && skipAuto {
 			continue
 		}
 		value, err := d.collectFieldValue(mi, fi, ind)
@@ -75,8 +86,8 @@ func (d *dbBase) InsertValue(q *sql.DB, mi *modelInfo, names []string, values []
 
 // execute insert sql dbQuerier with given struct reflect.Value.
 func (d *dbBase) Insert(q *sql.DB, mi *modelInfo, ind reflect.Value) (int64, error) {
-	names := make([]string, 0, len(mi.fields))
-	values, err := d.collectValues(mi, ind, mi.fields, &names)
+	names := make([]string, 0, len(mi.fields.dbcols))
+	values, err := d.collectValues(mi, ind, mi.fields.dbcols, true, &names)
 	if err != nil {
 		return 0, err
 	}
@@ -96,10 +107,10 @@ func (d *dbBase) Read(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []string
 	if len(cols) > 0 {
 		var err error
 		whereCols = make([]string, 0, len(cols))
-		// args, err = d.collectValues(mi, ind, cols, &whereCols)
-		// if err != nil {
-		// 	return err
-		// }
+		args, err = d.collectValues(mi, ind, cols, false, &whereCols)
+		if err != nil {
+			return err
+		}
 	} else {
 		// default use pk value as where condtion.
 		pkColumn, pkValue, ok := getExistPk(mi, ind)
@@ -110,15 +121,14 @@ func (d *dbBase) Read(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []string
 		args = append(args, pkValue)
 	}
 
-	if err != nil {
-		return 0, err
-	}
+	sels := strings.Join(mi.fields.dbcols, ", ")
+	wheres := strings.Join(whereCols, " = ? AND ")
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE %s = ?", sels, mi.table, wheres)
 
-	id, err := d.InsertValue(q, mi, names, values)
-	if err != nil {
-		return 0, err
-	}
-	return id, err
+	log.Println(query)
+	log.Println(args)
+
+	return nil
 }
 
 // flag of RETURNING sql.
