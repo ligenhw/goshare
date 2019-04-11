@@ -31,6 +31,7 @@ type UserInfo struct {
 	UserName string `orm:"varchar(20)"`
 	PassWord string `orm:"varchar(100)"`
 	Age      int
+	Ext      string
 	Time     time.Time `orm:"-"`
 }
 
@@ -39,6 +40,7 @@ func TestOrm(t *testing.T) {
 		UserName: "ggg",
 		PassWord: "123",
 		Age:      10,
+		Ext:      "22",
 	}
 	registerModel(&u)
 
@@ -53,8 +55,9 @@ func TestOrm(t *testing.T) {
 }
 
 func TestOrmQuery(t *testing.T) {
+	log.SetFlags(log.Lshortfile)
 	u := UserInfo{
-		Id: 10,
+		Id: 7,
 	}
 	registerModel(&u)
 

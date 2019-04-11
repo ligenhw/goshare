@@ -2,6 +2,7 @@ package orm
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"reflect"
 )
@@ -31,6 +32,8 @@ import (
 //		num, err = o.Delete(&u)
 //	}
 //
+
+var ErrNoRows = errors.New("<QuerySeter> no row found")
 
 type orm struct {
 	DbBaser dbBase

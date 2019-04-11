@@ -31,13 +31,14 @@ func newFields() *fields {
 }
 
 type fieldInfo struct {
-	column    string
-	typ       reflect.Type
-	addrField reflect.Value
-	sf        reflect.StructField
-	auto      bool
-	pk        bool
-	null      bool
+	column     string
+	fieldIndex []int
+	typ        reflect.Type
+	addrField  reflect.Value
+	sf         reflect.StructField
+	auto       bool
+	pk         bool
+	null       bool
 }
 
 func newFieldInfo(sf reflect.StructField, val reflect.Value) (fi *fieldInfo, err error) {

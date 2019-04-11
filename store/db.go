@@ -10,7 +10,7 @@ var Db *sql.DB
 
 func init() {
 	var err error
-	Db, err = sql.Open("mysql", "gen:1234@tcp(192.168.32.231)/goshare?charset=utf8&parseTime=true")
+	Db, err = sql.Open("mysql", "gen:1234@tcp(192.168.199.230)/goshare?charset=utf8&parseTime=true")
 	if err != nil {
 		panic(err)
 	}

@@ -18,11 +18,11 @@ func newModelInfo(val reflect.Value) *modelInfo {
 	mi.addrField = val
 	ind := reflect.Indirect(val)
 	mi.fields = newFields()
-	addModelFields(mi, ind)
+	addModelFields(mi, ind, []int{})
 	return mi
 }
 
-func addModelFields(mi *modelInfo, ind reflect.Value) {
+func addModelFields(mi *modelInfo, ind reflect.Value, index []int) {
 	var (
 		err error
 		fi  *fieldInfo
@@ -32,6 +32,13 @@ func addModelFields(mi *modelInfo, ind reflect.Value) {
 	for i := 0; i < ind.NumField(); i++ {
 		sf = ind.Type().Field(i)
 		field := ind.Field(i)
+
+		// add anonymous struct fields
+		if sf.Anonymous {
+			addModelFields(mi, field, append(index, i))
+			continue
+		}
+
 		fi, err = newFieldInfo(sf, field)
 		if err == errSkipField {
 			err = nil
@@ -40,6 +47,9 @@ func addModelFields(mi *modelInfo, ind reflect.Value) {
 			break
 		}
 
+		//record current field index
+		fi.fieldIndex = append(fi.fieldIndex, index...)
+		fi.fieldIndex = append(fi.fieldIndex, i)
 		mi.fields.Add(fi)
 
 		if fi.pk {

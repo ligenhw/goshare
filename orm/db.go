@@ -128,7 +128,61 @@ func (d *dbBase) Read(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []string
 	log.Println(query)
 	log.Println(args)
 
+	colsNum := len(mi.fields.dbcols)
+	refs := make([]interface{}, colsNum)
+	for i := range refs {
+		// var ref interface{}
+		column := mi.fields.dbcols[i]
+		fi := mi.fields.GetByColumn(column)
+		switch fi.typ.Kind() {
+		case reflect.Int:
+			v := new(int)
+			refs[i] = v
+		case reflect.String:
+			v := new(string)
+			refs[i] = v
+		default:
+			log.Println("warning not support type : ", fi.typ.Kind())
+		}
+	}
+	row := q.QueryRow(query, args...)
+	if err := row.Scan(refs...); err != nil {
+		if err == sql.ErrNoRows {
+			return ErrNoRows
+		}
+		return err
+	}
+
+	for _, r := range refs {
+		r := reflect.Indirect(reflect.ValueOf(r))
+		log.Println("after scan : ", r.Type().Kind(), r.Interface())
+	}
+
+	elm := reflect.New(mi.addrField.Elem().Type())
+	mind := reflect.Indirect(elm)
+	d.setColsValues(mi, &mind, mi.fields.dbcols, refs)
+	ind.Set(mind)
 	return nil
+}
+
+// set values to struct column.
+func (d *dbBase) setColsValues(mi *modelInfo, ind *reflect.Value, cols []string, values []interface{}) {
+	for i, column := range cols {
+		val := reflect.Indirect(reflect.ValueOf(values[i])).Interface()
+		fi := mi.fields.GetByColumn(column)
+		field := ind.FieldByIndex(fi.fieldIndex)
+		_, err := d.setFieldValue(fi, val, field)
+
+		if err != nil {
+			panic(fmt.Errorf("Raw value: `%v` %s", val, err.Error()))
+		}
+	}
+}
+
+// set one value to struct column field.
+func (d *dbBase) setFieldValue(fi *fieldInfo, value interface{}, field reflect.Value) (interface{}, error) {
+	field.Set(reflect.ValueOf(value))
+	return value, nil
 }
 
 // flag of RETURNING sql.
