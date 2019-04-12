@@ -36,6 +36,7 @@ func (d *dbBase) collectValues(mi *modelInfo, ind reflect.Value, cols []string, 
 		if fi.auto && skipAuto {
 			continue
 		}
+
 		value, err := d.collectFieldValue(mi, fi, ind)
 		if err != nil {
 			return nil, err
@@ -50,8 +51,8 @@ func (d *dbBase) collectValues(mi *modelInfo, ind reflect.Value, cols []string, 
 // get one field value in struct column as interface.
 func (d *dbBase) collectFieldValue(mi *modelInfo, fi *fieldInfo, ind reflect.Value) (interface{}, error) {
 	var value interface{}
-	typ := reflect.Indirect(fi.addrField)
-	value = typ.Interface()
+	field := ind.FieldByIndex(fi.fieldIndex)
+	value = field.Interface()
 	return value, nil
 }
 
@@ -163,6 +164,50 @@ func (d *dbBase) Read(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []string
 	d.setColsValues(mi, &mind, mi.fields.dbcols, refs)
 	ind.Set(mind)
 	return nil
+}
+
+func (d *dbBase) Delete(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []string) (int64, error) {
+	var whereCols []string
+	var args []interface{}
+
+	// if specify cols length > 0, then use it for where condition.
+	if len(cols) > 0 {
+		var err error
+		whereCols = make([]string, 0, len(cols))
+		args, err = d.collectValues(mi, ind, cols, false, &whereCols)
+		if err != nil {
+			return 0, err
+		}
+	} else {
+		// default use pk value as where condtion.
+		pkColumn, pkValue, ok := getExistPk(mi, ind)
+		if !ok {
+			return 0, ErrMissPK
+		}
+		whereCols = []string{pkColumn}
+		args = append(args, pkValue)
+	}
+
+	wheres := strings.Join(whereCols, " = ? AND ")
+
+	query := fmt.Sprintf("DELETE FROM %s WHERE %s = ?", mi.table, wheres)
+
+	res, err := q.Exec(query, args...)
+	if err == nil {
+		num, err := res.RowsAffected()
+		if err != nil {
+			return 0, err
+		}
+
+		return num, nil
+	}
+
+	return 0, err
+}
+
+// execute update sql dbQuerier with given struct reflect.Value.
+func (d *dbBase) Update(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []string) (int64, error) {
+	return 0, nil
 }
 
 // set values to struct column.

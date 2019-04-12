@@ -1,30 +1,11 @@
 package orm
 
 import (
-	"fmt"
-	"log"
-	"reflect"
 	"testing"
 	"time"
 
 	"github.com/ligenhw/goshare/store"
 )
-
-func TestReflect(t *testing.T) {
-	type T1 struct {
-		A int
-		B string
-	}
-	t1 := T1{23, "skidoo"}
-	fmt.Println(t1)
-
-	s := reflect.ValueOf(&t1).Elem()
-	typeofT := s.Type()
-	for i := 0; i < s.NumField(); i++ {
-		f := s.Field(i)
-		fmt.Printf("%s %s = %v\n", typeofT.Field(i).Name, f.Type(), f.Interface())
-	}
-}
 
 type UserInfo struct {
 	Id       int    `orm:"auto"`
@@ -35,58 +16,72 @@ type UserInfo struct {
 	Time     time.Time `orm:"-"`
 }
 
+var (
+	o = NewOrm(store.Db)
+)
+
+func init() {
+	registerModel(new(UserInfo))
+}
+
 func TestOrm(t *testing.T) {
+
 	u := UserInfo{
 		UserName: "ggg",
-		PassWord: "123",
+		PassWord: "1234",
 		Age:      10,
-		Ext:      "22",
 	}
-	registerModel(&u)
-
-	db := store.Db
-	o := NewOrm(db)
 
 	id, err := o.Insert(&u)
 	if err != nil {
-		panic(err)
+		t.Error(err)
 	}
-	log.Println(id)
+	t.Log(id)
 }
 
 func TestOrmQuery(t *testing.T) {
-	log.SetFlags(log.Lshortfile)
 	u := UserInfo{
-		Id: 7,
+		Id: 9,
 	}
-	registerModel(&u)
-
-	db := store.Db
-	o := NewOrm(db)
 
 	err := o.Read(&u)
 	if err != nil {
-		panic(err)
+		t.Error(err)
 	}
 
-	log.Println(u)
+	t.Log(u)
 }
 
-func TestOrmQuery1(t *testing.T) {
+func TestOrmQueryWithCols(t *testing.T) {
 	u := UserInfo{
-		Id:       10,
+		Id:       7,
 		UserName: "ggg",
 		Age:      11,
 	}
-	registerModel(&u)
-
-	db := store.Db
-	o := NewOrm(db)
 
 	err := o.Read(&u, "id", "user_name")
 	if err != nil {
-		panic(err)
+		t.Error(err)
 	}
 
-	log.Println(u)
+	t.Log(u)
+}
+
+func TestOrmDelete(t *testing.T) {
+	u := UserInfo{Id: 9}
+	num, err := o.Delete(&u)
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Log(num)
+}
+
+func TestOrmUpdate(t *testing.T) {
+	u := UserInfo{
+		Id: 8,
+		UserName: "lll",
+	}
+
+	o.Update(&u)
 }

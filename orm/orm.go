@@ -70,3 +70,21 @@ func (o *orm) Read(md interface{}, cols ...string) error {
 	mi, ind := o.getMiInd(md)
 	return o.DbBaser.Read(o.db, mi, ind, cols)
 }
+
+// update model to database.
+// cols set the columns those want to update.
+func (o *orm) Update(md interface{}, cols ...string) (int64, error) {
+	mi, ind := o.getMiInd(md)
+	return o.DbBaser.Update(o.db, mi, ind, cols)
+}
+
+// delete model in database
+// cols shows the delete conditions values read from. default is pk
+func (o *orm) Delete(md interface{}, cols ...string) (int64, error) {
+	mi, ind := o.getMiInd(md)
+	num, err := o.DbBaser.Delete(o.db, mi, ind, cols)
+	if err != nil {
+		return num, err
+	}
+	return num, nil
+}
