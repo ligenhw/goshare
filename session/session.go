@@ -60,7 +60,7 @@ func NewManager(provideName string) (*Manager, error) {
 	defer instanceLock.Unlock()
 
 	if Instance == nil {
-		defaultTime := int64(60)
+		defaultTime := int64(60 * 10)
 		provider.SessionInit(defaultTime)
 
 		Instance = &Manager{
