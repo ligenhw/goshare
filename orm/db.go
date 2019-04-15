@@ -207,7 +207,40 @@ func (d *dbBase) Delete(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []stri
 
 // execute update sql dbQuerier with given struct reflect.Value.
 func (d *dbBase) Update(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []string) (int64, error) {
-	return 0, nil
+	pkName, pkValue, ok := getExistPk(mi, ind)
+	if !ok {
+		return 0, ErrMissPK
+	}
+
+	var setNames []string
+
+	// if specify cols length is zero, then commit all columns.
+	if len(cols) == 0 {
+		cols = mi.fields.dbcols
+		setNames = make([]string, 0, len(mi.fields.dbcols)-1)
+	} else {
+		setNames = make([]string, 0, len(cols))
+	}
+
+	setValues, err := d.collectValues(mi, ind, cols, true, &setNames)
+	if err != nil {
+		return 0, err
+	}
+
+	setValues = append(setValues, pkValue)
+
+	setColumns := strings.Join(setNames, " = ? ,")
+
+	query := fmt.Sprintf("UPDATE %s SET %s = ? WHERE %s = ?", mi.table, setColumns, pkName)
+
+	log.Println(query)
+	log.Println(setValues)
+
+	res, err := q.Exec(query, setValues...)
+	if err == nil {
+		return res.RowsAffected()
+	}
+	return 0, err
 }
 
 // set values to struct column.

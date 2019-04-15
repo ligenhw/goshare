@@ -41,7 +41,7 @@ func TestOrm(t *testing.T) {
 
 func TestOrmQuery(t *testing.T) {
 	u := UserInfo{
-		Id: 9,
+		Id: 10,
 	}
 
 	err := o.Read(&u)
@@ -68,7 +68,7 @@ func TestOrmQueryWithCols(t *testing.T) {
 }
 
 func TestOrmDelete(t *testing.T) {
-	u := UserInfo{Id: 9}
+	u := UserInfo{Id: 12}
 	num, err := o.Delete(&u)
 	if err != nil {
 		t.Error(err)
@@ -79,9 +79,15 @@ func TestOrmDelete(t *testing.T) {
 
 func TestOrmUpdate(t *testing.T) {
 	u := UserInfo{
-		Id: 8,
+		Id: 11,
 		UserName: "lll",
+		PassWord: "secret",
+		Age: 30,
 	}
 
-	o.Update(&u)
+	num, err := o.Update(&u)
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(num)
 }
