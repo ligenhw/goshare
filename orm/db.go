@@ -267,3 +267,12 @@ func (d *dbBase) setFieldValue(fi *fieldInfo, value interface{}, field reflect.V
 func (d *dbBase) HasReturningID(*modelInfo, *string) bool {
 	return false
 }
+
+// read related records.
+func (d *dbBase) ReadBatch(q *sql.DB, qs *QuerySeter, mi *modelInfo, cond *Condition, container interface{}, cols []string) (int64, error) {
+
+	// val := reflect.ValueOf(container)
+	// ind := reflect.Indirect(val)
+
+	return 0, nil
+}

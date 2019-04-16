@@ -21,7 +21,7 @@ var (
 )
 
 func init() {
-	registerModel(new(UserInfo))
+	RegisterModel(new(UserInfo))
 }
 
 func TestOrm(t *testing.T) {
@@ -79,10 +79,10 @@ func TestOrmDelete(t *testing.T) {
 
 func TestOrmUpdate(t *testing.T) {
 	u := UserInfo{
-		Id: 11,
+		Id:       11,
 		UserName: "lll",
 		PassWord: "secret",
-		Age: 30,
+		Age:      30,
 	}
 
 	num, err := o.Update(&u)

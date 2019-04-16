@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func registerModel(model interface{}) {
+func RegisterModel(model interface{}) {
 	val := reflect.ValueOf(model)
 	ind := reflect.Indirect(val)
 	typ := ind.Type()

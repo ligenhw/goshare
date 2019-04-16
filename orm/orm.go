@@ -29,9 +29,12 @@ import (
 //		u := User{Id: user.Id}
 //		err = o.Read(&u)
 //		// delete
-//		num, err = o.Delete(&u)
+//      num, err = o.Delete(&u)
+
+// var posts []*Post
+// qs := o.QueryTable("post")
+// num, err := qs.Filter("name", "slene").All(&posts)
 //	}
-//
 
 var ErrNoRows = errors.New("<QuerySeter> no row found")
 
@@ -87,4 +90,10 @@ func (o *orm) Delete(md interface{}, cols ...string) (int64, error) {
 		return num, err
 	}
 	return num, nil
+}
+
+func (o *orm) QueryTable(md interface{}) (qs *QuerySeter) {
+	mi, ind := o.getMiInd(md)
+	qs = newQuerySet(o, mi)
+	return
 }

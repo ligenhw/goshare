@@ -1,15 +1,39 @@
 package blog
 
-import "time"
+import (
+	"time"
+
+	"github.com/ligenhw/goshare/orm"
+	"github.com/ligenhw/goshare/store"
+)
 
 type Comment struct {
-	Id      string
-	BlogId  string
-	UserId  string
+	Id      int
+	BlogId  int
+	UserId  int
 	Content string
-	Time    time.Time
+	Time    time.Time `orm:"-"`
 }
 
-func (c *Comment) Create() (err error) {
-	return nil
+var (
+	o = orm.NewOrm(store.Db)
+)
+
+func init() {
+	orm.RegisterModel(new(Comment))
+}
+
+func Create(blogId, userId int, content string) (err error) {
+	b := &Comment{
+		BlogId:  blogId,
+		UserId:  userId,
+		Content: content,
+	}
+
+	_, err = o.Insert(b)
+	return
+}
+
+func QueryByBlogId(blogId int) (err error) {
+	return
 }

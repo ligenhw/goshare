@@ -2,10 +2,14 @@ package api
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"log"
 	"net/http"
 	"path"
 	"strconv"
+
+	"github.com/ligenhw/goshare/auth"
 
 	"github.com/ligenhw/goshare/session"
 
@@ -45,6 +49,12 @@ func Post(w http.ResponseWriter, r *http.Request) (err error) {
 	if err != nil {
 		return
 	}
+
+	err = checkBlogOpPermission(w, r, &b)
+	if err != nil {
+		return
+	}
+
 	err = b.Create()
 	return
 }
@@ -57,6 +67,12 @@ func Delete(w http.ResponseWriter, r *http.Request) (err error) {
 	}
 
 	b := blog.Blog{Id: id}
+
+	err = checkBlogOpPermission(w, r, &b)
+	if err != nil {
+		return
+	}
+
 	err = b.Delete()
 	return
 }
@@ -66,6 +82,11 @@ func Put(w http.ResponseWriter, r *http.Request) (err error) {
 	decoder := json.NewDecoder(r.Body)
 	b := blog.Blog{}
 	err = decoder.Decode(&b)
+	if err != nil {
+		return
+	}
+
+	err = checkBlogOpPermission(w, r, &b)
 	if err != nil {
 		return
 	}
@@ -103,6 +124,33 @@ func WithSession(handler http.HandlerFunc) http.HandlerFunc {
 		}
 		handler(w, r)
 	}
+}
+
+func checkBlogOpPermission(w http.ResponseWriter, r *http.Request, blog *blog.Blog) (err error) {
+	var s session.Store
+	s, err = session.Instance.SessionStart(w, r)
+	if err != nil {
+		return
+	}
+
+	var userID int
+	userID, err = auth.Auth(s)
+	if err != nil {
+		return
+	}
+
+	err = blog.Query()
+	if err != nil {
+		return
+	}
+
+	if blog.User_Id == userID {
+		err = nil
+	} else {
+		err = errors.New(fmt.Sprintf("do not have blog op permission"))
+	}
+
+	return
 }
 
 func init() {
