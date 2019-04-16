@@ -36,7 +36,10 @@ import (
 // num, err := qs.Filter("name", "slene").All(&posts)
 //	}
 
-var ErrNoRows = errors.New("<QuerySeter> no row found")
+var (
+	DefaultRowsLimit = 1000
+	ErrNoRows        = errors.New("<QuerySeter> no row found")
+)
 
 type orm struct {
 	DbBaser dbBase
@@ -93,7 +96,7 @@ func (o *orm) Delete(md interface{}, cols ...string) (int64, error) {
 }
 
 func (o *orm) QueryTable(md interface{}) (qs *QuerySeter) {
-	mi, ind := o.getMiInd(md)
+	mi, _ := o.getMiInd(md)
 	qs = newQuerySet(o, mi)
 	return
 }

@@ -91,3 +91,16 @@ func TestOrmUpdate(t *testing.T) {
 	}
 	t.Log(num)
 }
+
+func TestOrmAll(t *testing.T) {
+	var infos []*UserInfo
+
+	qs := o.QueryTable(new(UserInfo))
+	num, err := qs.Filter("user_name", "ggg").All(&infos)
+	t.Log(num, err)
+	if err == nil {
+		for _, info := range infos {
+			t.Log(*info)
+		}
+	}
+}

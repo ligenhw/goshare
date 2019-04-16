@@ -154,11 +154,6 @@ func (d *dbBase) Read(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []string
 		return err
 	}
 
-	for _, r := range refs {
-		r := reflect.Indirect(reflect.ValueOf(r))
-		log.Println("after scan : ", r.Type().Kind(), r.Interface())
-	}
-
 	elm := reflect.New(mi.addrField.Elem().Type())
 	mind := reflect.Indirect(elm)
 	d.setColsValues(mi, &mind, mi.fields.dbcols, refs)
@@ -271,8 +266,97 @@ func (d *dbBase) HasReturningID(*modelInfo, *string) bool {
 // read related records.
 func (d *dbBase) ReadBatch(q *sql.DB, qs *QuerySeter, mi *modelInfo, cond *Condition, container interface{}, cols []string) (int64, error) {
 
-	// val := reflect.ValueOf(container)
-	// ind := reflect.Indirect(val)
+	val := reflect.ValueOf(container)
+	ind := reflect.Indirect(val)
 
-	return 0, nil
+	errTyp := true
+	one := true
+
+	if val.Kind() == reflect.Ptr {
+		fn := ""
+		if ind.Kind() == reflect.Slice {
+			one = false
+			typ := ind.Type().Elem()
+			switch typ.Kind() {
+			case reflect.Ptr:
+				fn = getFullName(typ.Elem())
+			case reflect.Struct:
+				fn = getFullName(typ)
+			}
+		} else {
+			fn = getFullName(ind.Type())
+		}
+		errTyp = fn != mi.fullName
+	}
+
+	if errTyp {
+		if one {
+			panic(fmt.Errorf("wrong object type `%s` for rows scan, need *%s", val.Type(), mi.fullName))
+		} else {
+			panic(fmt.Errorf("wrong object type `%s` for rows scan, need *[]*%s or *[]%s", val.Type(), mi.fullName, mi.fullName))
+		}
+	}
+
+	rlimit := qs.limit
+	offset := qs.offset
+
+	sels := strings.Join(mi.fields.dbcols, ", ")
+	where, args := getCondSQL(cond)
+	orderBy := getOrderSQL(qs.orders)
+	limit := getLimitSQL(mi, offset, rlimit)
+
+	sqlSelect := "SELECT"
+	if qs.distinct {
+		sqlSelect += " DISTINCT"
+	}
+	query := fmt.Sprintf("%s %s FROM %s %s %s %s", sqlSelect, sels, mi.table, where, orderBy, limit)
+
+	rs, err := q.Query(query, args...)
+	if err != nil {
+		return 0, err
+	}
+
+	log.Println(rs)
+	defer rs.Close()
+	slice := ind
+
+	colsNum := len(mi.fields.dbcols)
+	refs := make([]interface{}, colsNum)
+	for i := range refs {
+		// var ref interface{}
+		column := mi.fields.dbcols[i]
+		fi := mi.fields.GetByColumn(column)
+		switch fi.typ.Kind() {
+		case reflect.Int:
+			v := new(int)
+			refs[i] = v
+		case reflect.String:
+			v := new(string)
+			refs[i] = v
+		default:
+			log.Println("warning not support type : ", fi.typ.Kind())
+		}
+	}
+
+	var cnt int64
+	for rs.Next() {
+		if err := rs.Scan(refs...); err != nil {
+			if err == sql.ErrNoRows {
+				return cnt, ErrNoRows
+			}
+			return cnt, err
+		}
+
+		elm := reflect.New(mi.addrField.Elem().Type())
+		mind := reflect.Indirect(elm)
+		d.setColsValues(mi, &mind, mi.fields.dbcols, refs)
+		slice = reflect.Append(slice, mind.Addr())
+		cnt++
+	}
+
+	if cnt > 0 {
+		ind.Set(slice)
+	}
+
+	return cnt, nil
 }
