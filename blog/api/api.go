@@ -155,4 +155,5 @@ func checkBlogOpPermission(w http.ResponseWriter, r *http.Request, blog *blog.Bl
 
 func init() {
 	http.HandleFunc("/api/blog/", WithSession(BlogHandler))
+	http.HandleFunc("/api/comments/", WithSession(CommentsHandler))
 }

@@ -12,7 +12,7 @@ type Comment struct {
 	BlogId  int
 	UserId  int
 	Content string
-	Time    time.Time `orm:"-"`
+	Time    time.Time
 }
 
 var (
@@ -34,6 +34,8 @@ func Create(blogId, userId int, content string) (err error) {
 	return
 }
 
-func QueryByBlogId(blogId int) (err error) {
+func QueryByBlogId(blogId int) (comments []*Comment, err error) {
+	qs := o.QueryTable(new(Comment))
+	_, err = qs.Filter("blog_id", blogId).All(&comments)
 	return
 }

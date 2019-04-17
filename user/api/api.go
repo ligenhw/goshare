@@ -13,7 +13,7 @@ import (
 	"github.com/ligenhw/goshare/user"
 )
 
-// /user
+// /user   need auth
 func Get(w http.ResponseWriter, r *http.Request) (err error) {
 	globalSession := session.Instance
 

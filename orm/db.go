@@ -7,6 +7,7 @@ import (
 	"log"
 	"reflect"
 	"strings"
+	"time"
 )
 
 var (
@@ -143,7 +144,13 @@ func (d *dbBase) Read(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []string
 			v := new(string)
 			refs[i] = v
 		default:
-			log.Println("warning not support type : ", fi.typ.Kind())
+			switch fi.addrField.Interface().(type) {
+			case time.Time:
+				v := new(time.Time)
+				refs[i] = v
+			default:
+				log.Println("warning not support type : ", fi.typ.Kind())
+			}
 		}
 	}
 	row := q.QueryRow(query, args...)
@@ -334,7 +341,13 @@ func (d *dbBase) ReadBatch(q *sql.DB, qs *QuerySeter, mi *modelInfo, cond *Condi
 			v := new(string)
 			refs[i] = v
 		default:
-			log.Println("warning not support type : ", fi.typ.Kind())
+			switch fi.addrField.Interface().(type) {
+			case time.Time:
+				v := new(time.Time)
+				refs[i] = v
+			default:
+				log.Println("warning not support type : ", fi.typ.Kind())
+			}
 		}
 	}
 

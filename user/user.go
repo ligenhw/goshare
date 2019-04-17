@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/ligenhw/goshare/orm"
 	"github.com/ligenhw/goshare/store"
 )
 
@@ -23,6 +24,14 @@ type Profile struct {
 	Age     int
 	Address string
 	Email   string
+}
+
+var (
+	o = orm.NewOrm(store.Db)
+)
+
+func init() {
+	orm.RegisterModel(new(User))
 }
 
 func (u *User) Create() (err error) {
@@ -82,4 +91,9 @@ func GetAllUser() (users []*User, err error) {
 		users = append(users, &u)
 	}
 	return
+}
+
+func QueryUserWithIds(id ...int) {
+	// qs := o.QueryTable(new(User))
+	// qs.Filter("id in ", )
 }

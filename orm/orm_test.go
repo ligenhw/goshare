@@ -13,7 +13,7 @@ type UserInfo struct {
 	PassWord string `orm:"varchar(100)"`
 	Age      int
 	Ext      string
-	Time     time.Time `orm:"-"`
+	Time     time.Time
 }
 
 var (
