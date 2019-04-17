@@ -16,7 +16,7 @@ type User struct {
 	UserName string    `json:"username"`
 	Password string    `json:"password"`
 	Time     time.Time `json:"time"`
-	Profile  Profile   `json:"profile"`
+	Profile  Profile   `orm:"-"`
 }
 
 type Profile struct {
@@ -93,7 +93,9 @@ func GetAllUser() (users []*User, err error) {
 	return
 }
 
-func QueryUserWithIds(id ...int) {
-	// qs := o.QueryTable(new(User))
-	// qs.Filter("id in ", )
+func QueryUserWithIds(id ...interface{}) (users []*User, err error) {
+	qs := o.QueryTable(new(User))
+	_, err = qs.In("id", id...).All(&users)
+
+	return
 }

@@ -1,6 +1,9 @@
 package orm
 
-import "strings"
+import (
+	"fmt"
+	"strings"
+)
 
 // real query struct
 type QuerySeter struct {
@@ -24,8 +27,19 @@ func getCondSQL(cond *Condition) (where string, args []interface{}) {
 			}
 		}
 
-		wheres = append(wheres, p.exprs+" = ? ")
-		args = append(args, p.args...)
+		var w string
+		if p.isRaw {
+			w = p.sql
+		} else if p.isIn {
+			num := len(p.args)
+			str := strings.Repeat(", ?", num)
+			w = fmt.Sprintf("%s IN ( %s )", p.exprs, str[1:])
+			args = append(args, p.args...)
+		} else {
+			w = p.exprs + " = ? "
+			args = append(args, p.args...)
+		}
+		wheres = append(wheres, w)
 	}
 
 	where = strings.Join(wheres, ", ")
@@ -50,6 +64,22 @@ func (o *QuerySeter) Filter(expr string, args ...interface{}) *QuerySeter {
 		o.cond = NewCondition()
 	}
 	o.cond = o.cond.And(expr, args...)
+	return o
+}
+
+func (o *QuerySeter) Raw(sql string) *QuerySeter {
+	if o.cond == nil {
+		o.cond = NewCondition()
+	}
+	o.cond = o.cond.Raw(sql)
+	return o
+}
+
+func (o *QuerySeter) In(expr string, args ...interface{}) *QuerySeter {
+	if o.cond == nil {
+		o.cond = NewCondition()
+	}
+	o.cond = o.cond.In(expr, args...)
 	return o
 }
 
