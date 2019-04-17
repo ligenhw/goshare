@@ -8,11 +8,11 @@ import (
 )
 
 type Comment struct {
-	Id      int
-	BlogId  int
-	UserId  int
-	Content string
-	Time    time.Time
+	Id      int       `json:"id"`
+	BlogId  int       `json:"blogId"`
+	UserId  int       `json:"userId"`
+	Content string    `json:"content"`
+	Time    time.Time `json:"time"`
 }
 
 var (
@@ -23,7 +23,7 @@ func init() {
 	orm.RegisterModel(new(Comment))
 }
 
-func Create(blogId, userId int, content string) (err error) {
+func CreateComment(blogId, userId int, content string) (err error) {
 	b := &Comment{
 		BlogId:  blogId,
 		UserId:  userId,
@@ -35,6 +35,7 @@ func Create(blogId, userId int, content string) (err error) {
 }
 
 func QueryByBlogId(blogId int) (comments []*Comment, err error) {
+	comments = make([]*Comment, 0)
 	qs := o.QueryTable(new(Comment))
 	_, err = qs.Filter("blog_id", blogId).All(&comments)
 	return

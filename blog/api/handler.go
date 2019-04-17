@@ -7,6 +7,9 @@ import (
 	"path"
 	"strconv"
 
+	"github.com/ligenhw/goshare/auth"
+	"github.com/ligenhw/goshare/session"
+
 	"github.com/ligenhw/goshare/blog"
 	"github.com/ligenhw/goshare/user"
 )
@@ -14,6 +17,10 @@ import (
 type CommentsResp struct {
 	Comments []*blog.Comment `json:"comments"`
 	Users    []*user.User    `json:"users"`
+}
+
+type CommentReq struct {
+	Content string `json:"content"`
 }
 
 // :blogId
@@ -35,10 +42,12 @@ func GetComment(w http.ResponseWriter, r *http.Request) (err error) {
 		userIds = append(userIds, comment.UserId)
 	}
 
-	var users []*user.User
-	users, err = user.QueryUserWithIds(userIds...)
-	if err != nil {
-		return
+	users := make([]*user.User, 0)
+	if len(userIds) > 0 {
+		users, err = user.QueryUserWithIds(userIds...)
+		if err != nil {
+			return
+		}
 	}
 
 	resp := CommentsResp{Comments: comments, Users: users}
@@ -56,6 +65,41 @@ func GetComment(w http.ResponseWriter, r *http.Request) (err error) {
 	return
 }
 
+// :blogId
+func CreateComment(w http.ResponseWriter, r *http.Request) (err error) {
+	var blogId int
+	blogId, err = strconv.Atoi(path.Base(r.URL.Path))
+	if err != nil {
+		return
+	}
+
+	globalSession := session.Instance
+
+	var session session.Store
+	session, err = globalSession.SessionStart(w, r)
+	if err != nil {
+		return
+	}
+
+	var userID int
+	userID, err = auth.Auth(session)
+	if err != nil {
+		return
+	}
+
+	decoder := json.NewDecoder(r.Body)
+	defer r.Body.Close()
+
+	c := CommentReq{}
+	err = decoder.Decode(&c)
+	if err != nil {
+		return
+	}
+
+	err = blog.CreateComment(blogId, userID, c.Content)
+	return
+}
+
 func CommentsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Println(r.URL, r.Method)
 
@@ -63,8 +107,8 @@ func CommentsHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		err = GetComment(w, r)
-		// case http.MethodPost:
-		// 	err = Post(w, r)
+	case http.MethodPost:
+		err = CreateComment(w, r)
 		// case http.MethodDelete:
 		// 	err = Delete(w, r)
 		// case http.MethodPut:
