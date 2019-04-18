@@ -2,6 +2,7 @@ package auth
 
 import (
 	"errors"
+	"net/http"
 
 	"github.com/ligenhw/goshare/session"
 
@@ -48,5 +49,16 @@ func Auth(session session.Store) (userID int, err error) {
 	}
 
 	userID = value.(int)
+	return
+}
+
+func GetAuthUser(w http.ResponseWriter, r *http.Request) (userID int, err error) {
+	var s session.Store
+	s, err = session.Instance.SessionStart(w, r)
+	if err != nil {
+		return
+	}
+
+	userID, err = Auth(s)
 	return
 }

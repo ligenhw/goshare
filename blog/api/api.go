@@ -50,7 +50,7 @@ func Post(w http.ResponseWriter, r *http.Request) (err error) {
 		return
 	}
 
-	err = checkBlogOpPermission(w, r, &b)
+	_, err = auth.GetAuthUser(w, r)
 	if err != nil {
 		return
 	}
@@ -68,7 +68,7 @@ func Delete(w http.ResponseWriter, r *http.Request) (err error) {
 
 	b := blog.Blog{Id: id}
 
-	err = checkBlogOpPermission(w, r, &b)
+	err = checkBlogOpPermission(w, r, b)
 	if err != nil {
 		return
 	}
@@ -86,7 +86,7 @@ func Put(w http.ResponseWriter, r *http.Request) (err error) {
 		return
 	}
 
-	err = checkBlogOpPermission(w, r, &b)
+	err = checkBlogOpPermission(w, r, b)
 	if err != nil {
 		return
 	}
@@ -126,18 +126,10 @@ func WithSession(handler http.HandlerFunc) http.HandlerFunc {
 	}
 }
 
-func checkBlogOpPermission(w http.ResponseWriter, r *http.Request, blog *blog.Blog) (err error) {
-	var s session.Store
-	s, err = session.Instance.SessionStart(w, r)
-	if err != nil {
-		return
-	}
+func checkBlogOpPermission(w http.ResponseWriter, r *http.Request, blog blog.Blog) (err error) {
 
 	var userID int
-	userID, err = auth.Auth(s)
-	if err != nil {
-		return
-	}
+	userID, err = auth.GetAuthUser(w, r)
 
 	err = blog.Query()
 	if err != nil {
