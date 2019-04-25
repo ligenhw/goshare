@@ -131,12 +131,12 @@ func checkBlogOpPermission(w http.ResponseWriter, r *http.Request, blog blog.Blo
 	var userID int
 	userID, err = auth.GetAuthUser(w, r)
 
-	err = blog.Query()
+	err = blog.QueryById()
 	if err != nil {
 		return
 	}
 
-	if blog.User_Id == userID {
+	if blog.UserId == userID {
 		err = nil
 	} else {
 		err = errors.New(fmt.Sprintf("do not have blog op permission"))

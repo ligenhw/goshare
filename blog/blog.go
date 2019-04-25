@@ -10,7 +10,7 @@ import (
 
 type Blog struct {
 	Id      int       `json:"id"`
-	User_Id int       `json:"user_id"`
+	UserId  int       `json:"user_id"`
 	Title   string    `json:"title"`
 	Content string    `json:"content"`
 	Time    time.Time `json:"time"`
@@ -53,18 +53,8 @@ func (b *Blog) QueryById() (err error) {
 }
 
 func GetAllBlogs() (blogs []*Blog, err error) {
-	rows, err := db.Query("SELECT id, user_id, title, content, time FROM blog ORDER BY time DESC")
-	if err != nil {
-		return
-	}
-
-	for rows.Next() {
-		b := Blog{}
-		err = rows.Scan(&b.Id, &b.User_Id, &b.Title, &b.Content, &b.Time)
-		if err != nil {
-			return
-		}
-		blogs = append(blogs, &b)
-	}
+	blogs = make([]*Blog, 0)
+	qb := o.QueryTable(new(Blog))
+	_, err = qb.OrderBy("-time").All(&blogs)
 	return
 }

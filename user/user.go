@@ -1,7 +1,6 @@
 package user
 
 import (
-	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -32,7 +31,6 @@ var (
 )
 
 func init() {
-	log.Println("user.go init")
 	orm.RegisterModel(new(User))
 }
 
