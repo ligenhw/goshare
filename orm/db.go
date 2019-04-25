@@ -325,7 +325,7 @@ func (d *dbBase) ReadBatch(q *sql.DB, qs *QuerySeter, mi *modelInfo, cond *Condi
 
 	log.Println(query)
 	log.Println(args...)
-	
+
 	defer rs.Close()
 	slice := ind
 

@@ -3,11 +3,7 @@ package blog
 import "testing"
 
 func TestComment(t *testing.T) {
-	t.Log(Create(58, 1, "good comment by gen"))
-}
-
-func TestReadComment(t *testing.T) {
-
+	t.Log(CreateComment(58, 1, "good comment by gen"))
 }
 
 func TestCommentQueryByBlogId(t *testing.T) {
@@ -18,5 +14,5 @@ func TestCommentQueryByBlogId(t *testing.T) {
 	for _, c := range comments {
 		t.Log(*c)
 	}
-	
+
 }

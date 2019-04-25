@@ -28,6 +28,7 @@ func CreateComment(blogId, userId int, content string) (err error) {
 		BlogId:  blogId,
 		UserId:  userId,
 		Content: content,
+		Time:    time.Now(),
 	}
 
 	_, err = o.Insert(b)
@@ -37,6 +38,6 @@ func CreateComment(blogId, userId int, content string) (err error) {
 func QueryByBlogId(blogId int) (comments []*Comment, err error) {
 	comments = make([]*Comment, 0)
 	qs := o.QueryTable(new(Comment))
-	_, err = qs.Filter("blog_id", blogId).All(&comments)
+	_, err = qs.Filter("blog_id", blogId).OrderBy("-time").All(&comments)
 	return
 }
