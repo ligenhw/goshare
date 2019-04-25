@@ -14,7 +14,7 @@ var ErrorAuthFailed = errors.New("auth failed")
 
 func Check(username, password string) (u user.User, err error) {
 	u = user.User{UserName: username}
-	err = u.Query()
+	err = u.QueryByName()
 	if err != nil {
 		return
 	}

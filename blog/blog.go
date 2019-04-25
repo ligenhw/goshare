@@ -3,6 +3,8 @@ package blog
 import (
 	"time"
 
+	"github.com/ligenhw/goshare/orm"
+
 	"github.com/ligenhw/goshare/store"
 )
 
@@ -14,16 +16,29 @@ type Blog struct {
 	Time    time.Time `json:"time"`
 }
 
-var db = store.Db
+var (
+	db = store.Db
+	o  = orm.NewOrm(store.Db)
+)
+
+func init() {
+	orm.RegisterModel(new(Blog))
+}
 
 func (b *Blog) Create() (err error) {
-	_, err = db.Exec("INSERT INTO blog (user_id, title, content) VALUES (?, ?, ?)", b.User_Id, b.Title, b.Content)
+	var id int64
+	id, err = o.Insert(b)
+	if err != nil {
+		return
+	}
+
+	b.Id = int(id)
 	return
 }
 
 // delete by id
 func (b *Blog) Delete() (err error) {
-	_, err = db.Exec("DELETE FROM blog WHERE id = ?", b.Id)
+	_, err = o.Delete(b)
 	return
 }
 
@@ -32,8 +47,8 @@ func (b *Blog) Update() (err error) {
 	return
 }
 
-func (b *Blog) Query() (err error) {
-	err = db.QueryRow("SELECT id, user_id, title, content, time FROM blog where id = ?", b.Id).Scan(&b.Id, &b.User_Id, &b.Title, &b.Content, &b.Time)
+func (b *Blog) QueryById() (err error) {
+	err = o.Read(b)
 	return
 }
 

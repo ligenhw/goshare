@@ -1,6 +1,7 @@
 package user
 
 import (
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -31,17 +32,24 @@ var (
 )
 
 func init() {
+	log.Println("user.go init")
 	orm.RegisterModel(new(User))
 }
 
 func (u *User) Create() (err error) {
-	_, err = db.Exec("INSERT INTO user (user_name, password) VALUES (?, ?)", u.UserName, u.Password)
+	u.Time = time.Now()
+	var id int64
+	id, err = o.Insert(u)
+	if err != nil {
+		return
+	}
+	u.Id = int(id)
 	return
 }
 
 // delete by Id
 func (u *User) Delete() (err error) {
-	_, err = db.Exec("DELETE FROM user where id = ?", u.Id)
+	_, err = o.Delete(u)
 	return
 }
 
@@ -69,27 +77,19 @@ func (u *User) Update() (err error) {
 }
 
 // query by UserName
-func (u *User) Query() (err error) {
-	err = db.QueryRow("SELECT id, user_name, password, time FROM user WHERE user_name = ?", u.UserName).Scan(&u.Id, &u.UserName, &u.Password, &u.Time)
+func (u *User) QueryByName() (err error) {
+	err = o.Read(u, "user_name")
 	return
 }
 
-// query by UserName
 func (u *User) QueryByID() (err error) {
-	err = db.QueryRow("SELECT id, user_name, password, time FROM user WHERE id = ?", u.Id).Scan(&u.Id, &u.UserName, &u.Password, &u.Time)
+	err = o.Read(u)
 	return
 }
 
 func GetAllUser() (users []*User, err error) {
-	rows, err := db.Query("SELECT id, user_name, password, time FROM user")
-	if err != nil {
-		return
-	}
-	for rows.Next() {
-		u := User{}
-		rows.Scan(&u.Id, &u.UserName, &u.Password, &u.Time)
-		users = append(users, &u)
-	}
+	qs := o.QueryTable(new(User))
+	_, err = qs.All(&users)
 	return
 }
 

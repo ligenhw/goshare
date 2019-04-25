@@ -1,38 +1,51 @@
 package user
 
 import (
-	"strconv"
 	"testing"
 )
 
-func TestGetAllUser(t *testing.T) {
+func TestUser(t *testing.T) {
+	u, err := CreateTestUser(t)
+	if err != nil {
+		t.Error("can not create a test user")
+	}
+
+	u2 := User{Id: u.Id}
+	err = u2.QueryByID()
+	if err != nil {
+		t.Error(err)
+	}
+
+	if u.UserName != u2.UserName || u.Password != u2.Password {
+		t.Error("Query User Error")
+	}
+
 	users, _ := GetAllUser()
-	for _, u := range users {
-		t.Log(*u)
+
+	err = u2.Delete()
+	if err != nil {
+		t.Error("Delete User failed.")
+	}
+
+	users2, _ := GetAllUser()
+	if len(users)-len(users2) != 1 {
+		t.Error("After delete count do not decrease")
 	}
 }
 
-func TestCreateQueryDelete(t *testing.T) {
-	u := User{UserName: "test1", Password: "testpass"}
-	t.Log("Create result : ", u.Create())
-	t.Log("Query result : ", u.Query())
-	u.Password = "change123"
-	t.Log("Update result : ", u.Update())
-	t.Log(u)
-	t.Log("Delete result: ", u.Delete())
-}
+func CreateTestUser(t *testing.T) (user *User, err error) {
+	u := User{UserName: "testuser", Password: "testpass"}
+	// clean up
+	u.QueryByName()
+	u.Delete()
 
-func TestCreateExsts(t *testing.T) {
-	u1 := User{UserName: "test2", Password: "testpass2"}
-	u2 := u1
-	t.Log("Create u : ", u1.Create())
-	t.Log("Create u2 : ", u2.Create())
-}
+	err = u.Create()
+	if err != nil {
+		t.Error(err)
+		return
+	}
 
-func TestI2S(t *testing.T) {
-	s := string(37)
-	t.Log(s)
-
-	s1 := strconv.Itoa(37)
-	t.Log(s1)
+	user = &u
+	t.Log("user create success")
+	return
 }

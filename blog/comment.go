@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/ligenhw/goshare/orm"
-	"github.com/ligenhw/goshare/store"
 )
 
 type Comment struct {
@@ -14,10 +13,6 @@ type Comment struct {
 	Content string    `json:"content"`
 	Time    time.Time `json:"time"`
 }
-
-var (
-	o = orm.NewOrm(store.Db)
-)
 
 func init() {
 	orm.RegisterModel(new(Comment))

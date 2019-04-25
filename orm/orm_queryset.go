@@ -84,6 +84,9 @@ func (o *QuerySeter) In(expr string, args ...interface{}) *QuerySeter {
 }
 
 func (o *QuerySeter) All(container interface{}, cols ...string) (int64, error) {
+	if o.cond == nil {
+		o.cond = NewCondition()
+	}
 	return o.orm.DbBaser.ReadBatch(o.orm.db, o, o.mi, o.cond, container, cols)
 }
 

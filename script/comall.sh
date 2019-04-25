@@ -7,12 +7,11 @@ commitAll() {
 
 commitAll
 
-
 test() {
+    # User
+    go test -v -count=1 github.com/ligenhw/goshare/user -run TestUser
+
     go test -v github.com/ligenhw/goshare/blog -run TestBlogDetails
     go test -v github.com/ligenhw/goshare/orm -run TestReflect
     go test -v -count=1 github.com/ligenhw/goshare/orm -run TestOrm
 }
-
-
-"You have an error in your SQL syntax; check the manual that corr...+138 more"
