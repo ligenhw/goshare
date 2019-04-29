@@ -15,3 +15,7 @@ test() {
     go test -v github.com/ligenhw/goshare/orm -run TestReflect
     go test -v -count=1 github.com/ligenhw/goshare/orm -run TestOrm
 }
+
+
+go test -count=1 ./...
+

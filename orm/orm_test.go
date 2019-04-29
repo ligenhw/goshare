@@ -7,13 +7,12 @@ import (
 	"github.com/ligenhw/goshare/store"
 )
 
-type UserInfo struct {
-	Id       int    `orm:"auto"`
-	UserName string `orm:"varchar(20)"`
-	PassWord string `orm:"varchar(100)"`
-	Age      int
-	Ext      string
-	Time     time.Time
+// avoid import cycle
+type User struct {
+	Id       int       `json:"id"`
+	UserName string    `json:"username"`
+	Password string    `json:"password"`
+	Time     time.Time `json:"time"`
 }
 
 var (
@@ -21,86 +20,60 @@ var (
 )
 
 func init() {
-	RegisterModel(new(UserInfo))
+	RegisterModel(new(User))
 }
 
 func TestOrm(t *testing.T) {
-
-	u := UserInfo{
-		UserName: "ggg",
-		PassWord: "1234",
-		Age:      10,
+	// create
+	u := User{
+		UserName: "testorm",
+		Password: "testorm_pass",
+		Time:     time.Now(),
 	}
 
-	id, err := o.Insert(&u)
-	if err != nil {
-		t.Error(err)
-	}
-	t.Log(id)
-}
-
-func TestOrmQuery(t *testing.T) {
-	u := UserInfo{
-		Id: 10,
+	if id, err := o.Insert(&u); err != nil {
+		t.Fatal(err)
+		t.FailNow()
+	} else {
+		u.Id = int(id)
 	}
 
-	err := o.Read(&u)
-	if err != nil {
-		t.Error(err)
+	// query
+	u2 := User{
+		UserName: u.UserName,
+	}
+	if err := o.Read(&u2, "user_name"); err != nil {
+		t.Fatal(err)
+		t.FailNow()
+	}
+	if u.Password != u2.Password {
+		t.Fatal("query failed.")
+		t.FailNow()
 	}
 
-	t.Log(u)
-}
-
-func TestOrmQueryWithCols(t *testing.T) {
-	u := UserInfo{
-		Id:       7,
-		UserName: "ggg",
-		Age:      11,
+	// update
+	u.Password = "changeme"
+	if _, err := o.Update(&u); err != nil {
+		t.Fatal(err)
+		t.FailNow()
 	}
 
-	err := o.Read(&u, "id", "user_name")
-	if err != nil {
-		t.Error(err)
+	// delete
+	if _, err := o.Delete(&u); err != nil {
+		t.Fatal(err)
+		t.FailNow()
 	}
-
-	t.Log(u)
-}
-
-func TestOrmDelete(t *testing.T) {
-	u := UserInfo{Id: 12}
-	num, err := o.Delete(&u)
-	if err != nil {
-		t.Error(err)
-	}
-
-	t.Log(num)
-}
-
-func TestOrmUpdate(t *testing.T) {
-	u := UserInfo{
-		Id:       11,
-		UserName: "lll",
-		PassWord: "secret",
-		Age:      30,
-	}
-
-	num, err := o.Update(&u)
-	if err != nil {
-		t.Error(err)
-	}
-	t.Log(num)
 }
 
 func TestOrmAll(t *testing.T) {
-	var infos []*UserInfo
+	var users []*User
 
-	qs := o.QueryTable(new(UserInfo))
-	num, err := qs.Filter("user_name", "ggg").All(&infos)
+	qs := o.QueryTable(new(User))
+	num, err := qs.Filter("user_name", "ggg").All(&users)
 	t.Log(num, err)
 	if err == nil {
-		for _, info := range infos {
-			t.Log(*info)
+		for _, user := range users {
+			t.Log(*user)
 		}
 	}
 }

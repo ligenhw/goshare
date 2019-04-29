@@ -2,32 +2,75 @@ package blog
 
 import (
 	"testing"
+
+	"github.com/ligenhw/goshare/user"
 )
 
-func TestGetAllBlogs(t *testing.T) {
-	blogs, _ := GetAllBlogs()
-	for _, blog := range blogs {
-		t.Log(blog)
+func TestBlog(t *testing.T) {
+	// set up
+	u := user.User{UserName: "testuser_blog", Password: "testpass_blog"}
+	if err := u.QueryByName(); err != nil {
+		t.Log("no need delete testuser")
+	} else if err := u.Delete(); err != nil {
+		t.Error(err)
+	}
+
+	if err := u.Create(); err != nil {
+		t.Error(err)
+	}
+
+	// create
+	b := Blog{
+		UserId:  u.Id,
+		Title:   "testblog",
+		Content: "testblog_content",
+	}
+	if err := b.Create(); err != nil {
+		t.Error(err)
+	}
+
+	blogs, err := GetAllBlogs()
+	if err != nil {
+		t.Error(err)
+	}
+	var find bool
+	for _, item := range blogs {
+		if item.Id == b.Id {
+			find = true
+			if item.Title != b.Title || item.Content != b.Content {
+				t.Error("query all blogs not equals")
+			}
+		}
+	}
+	if !find {
+		t.Error("do not have blog in getAllBlogs result.")
+	}
+
+	// update
+	b.Title = "newTitle"
+	if err = b.Update(); err != nil {
+		t.Error(err)
+	}
+
+	// query
+	b1 := Blog{
+		Id: b.Id,
+	}
+	if err = b1.QueryById(); err != nil {
+		t.Error(err)
+	}
+	if b1.Title != b.Title {
+		t.Error("update title failed")
+	}
+
+	// delete
+	if err = b.Delete(); err != nil {
+		t.Error(err)
+	}
+
+	// clean
+	if err = u.Delete(); err != nil {
+		t.Error(err)
 	}
 }
 
-func TestCreate(t *testing.T) {
-	b := Blog{User_Id: 1, Title: "testT1", Content: "testC1"}
-	t.Log("Create : ", b.Create())
-
-	b.Title = "newttttttitle"
-	b.Id = 7
-	t.Log("Update : ", b.Update())
-
-	t.Log("Delete : ", b.Delete())
-}
-
-func TestBlogDetails(t *testing.T) {
-	bd := BlogDetail{
-		Blog: Blog{
-			Id: 55,
-		},
-	}
-	t.Log(bd.QueryByID())
-	t.Log(bd)
-}
