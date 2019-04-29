@@ -7,6 +7,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"time"
+
+	"github.com/ligenhw/goshare/user"
 )
 
 type GhReq struct {
@@ -49,10 +52,12 @@ func getGhToken(code string) (token string, err error) {
 	req.Header.Set("Accept", CONTENT_TYPE)
 
 	var resp *http.Response
+	log.Println("request to : ", token_url, "start")
 	resp, err = http.DefaultClient.Do(req)
 	if err != nil {
 		return
 	}
+	log.Println("request to : ", token_url, "end")
 
 	if resp.StatusCode == http.StatusOK {
 		defer resp.Body.Close()
@@ -88,19 +93,31 @@ var (
 	GET_USER_INFO_ERR = errors.New("get user info failed")
 )
 
-func getGhUserInfo(token string) (err error) {
+type GhUserInfo struct {
+	Login     string `json:"login"`
+	Id        int    `json:"id"`
+	AvatarUrl string `json:"avatar_url"`
+	Name      string `json:"name"`
+	Company   string `json:"company"`
+	Email     string `json:"email"`
+	Location  string `json:"location"`
+}
+
+func getGhUserInfo(token string) (info *GhUserInfo, err error) {
 	var req *http.Request
 	req, err = http.NewRequest("GET", user_url, nil)
 	req.Header.Add("Authorization", "token "+token)
 
 	var resp *http.Response
+	log.Println("request to : ", user_url, "start")
 	resp, err = http.DefaultClient.Do(req)
 	if err != nil {
 		return
 	}
+	log.Println("request to : ", user_url, " end")
 
 	if resp.StatusCode != http.StatusOK {
-		return GET_USER_INFO_ERR
+		return nil, GET_USER_INFO_ERR
 	} else {
 		defer resp.Body.Close()
 
@@ -112,6 +129,43 @@ func getGhUserInfo(token string) (err error) {
 
 		log.Println("get user info from gh : ")
 		log.Println(string(bs))
+
+		info = new(GhUserInfo)
+		err = json.Unmarshal(bs, &info)
+		if err != nil {
+			return nil, err
+		}
 		return
 	}
+}
+
+func GhLogin(code string) (id int, err error) {
+	var token string
+	token, err = getGhToken(code)
+	if err != nil {
+		return
+	}
+
+	var info *GhUserInfo
+	info, err = getGhUserInfo(token)
+	if err != nil {
+		return
+	}
+
+	u := user.User{
+		UserName: info.Login,
+		Time:     time.Now(),
+	}
+
+	err = u.QueryByName()
+	if err != nil {
+		log.Println(err)
+		err = u.Create()
+		if err != nil {
+			return
+		}
+	}
+
+	id = u.Id
+	return
 }

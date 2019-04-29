@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"path"
 	"strconv"
+	"time"
 
 	"github.com/ligenhw/goshare/auth"
 
@@ -55,6 +56,7 @@ func Post(w http.ResponseWriter, r *http.Request) (err error) {
 		return
 	}
 
+	b.Time = time.Now()
 	err = b.Create()
 	return
 }
