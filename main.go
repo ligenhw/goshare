@@ -6,6 +6,7 @@ import (
 
 	_ "github.com/ligenhw/goshare/auth/api"
 	_ "github.com/ligenhw/goshare/blog/api"
+	"github.com/ligenhw/goshare/configration"
 	_ "github.com/ligenhw/goshare/health/api"
 	"github.com/ligenhw/goshare/session"
 	_ "github.com/ligenhw/goshare/session/api"
@@ -13,7 +14,9 @@ import (
 	"github.com/ligenhw/goshare/version"
 )
 
-var globalSession *session.Manager
+var (
+	globalSession *session.Manager
+)
 
 func init() {
 	log.SetFlags(log.Flags() | log.Llongfile)
@@ -23,6 +26,6 @@ func init() {
 }
 
 func main() {
-	p("Go share", version.Version, "started at", config.Address)
-	http.ListenAndServe(config.Address, nil)
+	p("Go share", version.Version, "started at", configration.Conf.Address)
+	http.ListenAndServe(configration.Conf.Address, nil)
 }

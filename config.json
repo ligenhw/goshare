@@ -1,5 +1,6 @@
 {
     "Address"        : ":8080",
     "ReadTimeout"    : 10,
-    "WriteTimeout"   : 600
-  }
+    "WriteTimeout"   : 600,
+    "Dsn": "gen:1234@tcp(172.0.0.63)/goshare?charset=utf8&parseTime=true"
+}
