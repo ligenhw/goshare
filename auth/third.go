@@ -153,8 +153,9 @@ func GhLogin(code string) (id int, err error) {
 	}
 
 	u := user.User{
-		UserName: info.Login,
-		Time:     time.Now(),
+		UserName:  info.Login,
+		AvatarUrl: info.AvatarUrl,
+		Time:      time.Now(),
 	}
 
 	err = u.QueryByName()

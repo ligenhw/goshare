@@ -27,12 +27,15 @@ func Get(w http.ResponseWriter, r *http.Request) (err error) {
 		bd := &blog.BlogDetail{
 			Blog: blog.Blog{Id: id},
 		}
-		bd.QueryByID()
+		err = bd.QueryByID()
+		if err != nil {
+			return
+		}
 		result = bd
 	} else {
 		result, err = blog.GetAllBlogs()
 		if err != nil {
-			return err
+			return
 		}
 	}
 

@@ -12,11 +12,12 @@ import (
 var db = store.Db
 
 type User struct {
-	Id       int       `json:"id"`
-	UserName string    `json:"username"`
-	Password string    `json:"password"`
-	Time     time.Time `json:"time"`
-	Profile  Profile   `orm:"-"`
+	Id        int       `json:"id"`
+	UserName  string    `json:"username"`
+	Password  string    `json:"password"`
+	AvatarUrl string    `json:"avatarurl"`
+	Time      time.Time `json:"time"`
+	Profile   Profile   `orm:"-"`
 }
 
 type Profile struct {

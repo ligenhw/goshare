@@ -7,6 +7,7 @@ create table user (
     id Int auto_increment,
     user_name varchar(20) not null,
     password varchar(20) not null,
+    avatar_url varchar(40) DEFAULT '',
     time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     primary key (id),
     UNIQUE KEY (user_name)
@@ -48,8 +49,6 @@ create table comment (
 
 
 
-
-
 drop table user_info;
 
 create table user_info (
@@ -60,3 +59,6 @@ create table user_info (
     time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     primary key (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+alter table user add column avatar_url varchar(40);
+alter table user modify column avatar_url char(100);
