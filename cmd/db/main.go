@@ -92,7 +92,7 @@ func scanFile(path string) (err error) {
 	if content, err = ioutil.ReadFile(path); err == nil {
 		name := filepath.Base(path)
 		log.Println("scan file : ", name)
-		b := blog.Blog{User_Id: 1, Title: strings.Split(name, ".")[0], Content: string(content)}
+		b := blog.Blog{UserId: 1, Title: strings.Split(name, ".")[0], Content: string(content)}
 		err = b.Create()
 	}
 

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"path"
+	"runtime"
 )
 
 type Config struct {
@@ -19,8 +21,16 @@ func init() {
 	loadconfig()
 }
 
+func getCurrentPath() string {
+	_, filename, _, _ := runtime.Caller(1)
+
+	return path.Dir(filename)
+}
+
 func loadconfig() {
-	file, err := os.Open("config.json")
+	currentPath := getCurrentPath()
+
+	file, err := os.Open(currentPath + "/config.json")
 	if err != nil {
 		log.Fatalln("Can not open config file", err)
 	}
@@ -30,4 +40,6 @@ func loadconfig() {
 	if err != nil {
 		log.Fatalln("Cannot get Conf from file", err)
 	}
+	log.Println("load config : ", Conf)
+
 }
