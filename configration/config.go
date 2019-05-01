@@ -19,6 +19,7 @@ var Conf Config
 
 func init() {
 	loadconfig()
+	loadEnv()
 }
 
 func getCurrentPath() string {
@@ -41,5 +42,11 @@ func loadconfig() {
 		log.Fatalln("Cannot get Conf from file", err)
 	}
 	log.Println("load config : ", Conf)
+}
 
+func loadEnv() {
+	if dsn, ok := os.LookupEnv("DSN"); ok {
+		Conf.Dsn = dsn
+		log.Println("load from env dsn : ", dsn)
+	}
 }

@@ -34,11 +34,12 @@ GOOS=linux GOARCH=amd64 go build
 
 config.json
 
+## 环境变量
+
+export DSN="gen:1234@tcp(192.168.199.231)/goshare?charset=utf8&parseTime=true"
+./goshare
 
 ## 改进点
 * 使用context传递请求上下文参数，解除session, auth 与业务的耦合
 >参考 https://www.ddhigh.com/2018/10/17/golang-context-with-value.html
 
-"Dsn": "root:@tcp(127.0.0.1)/goshare?charset=utf8&parseTime=true"
-
-"Dsn": "gen:1234@tcp(192.168.199.231)/goshare?charset=utf8&parseTime=true"
