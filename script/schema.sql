@@ -48,17 +48,3 @@ create table comment (
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
-
-drop table user_info;
-
-create table user_info (
-    id Int auto_increment,
-    user_name varchar(20) not null,
-    pass_word varchar(20) not null,
-    age Int,
-    time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    primary key (id)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-alter table user add column avatar_url varchar(40);
-alter table user modify column avatar_url char(100);

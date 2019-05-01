@@ -2,6 +2,10 @@
 
 开源博客系统
 
+[![Build Status](https://travis-ci.org/ligenhw/goshare.svg?branch=master)](https://travis-ci.org/ligenhw/goshare) 
+[![Go Report Card](https://goreportcard.com/badge/github.com/ligenhw/goshare)](https://goreportcard.com/report/github.com/ligenhw/goshare)
+
+
 ## 安装 构建
 
 go get -u github.com/ligenhw/goshare
@@ -13,11 +17,12 @@ GOOS=linux GOARCH=amd64 go build
 * 文章
 * 用户
 * 评论
+* 三方登录 github
 
 ## 计划加入的功能
 
 * 三方登陆
-  支持 github, qq , 微信
+  支持 qq , 微信
 * 搜索
 * 博客迁移
   支持迁移 简书,CSDN,博客园中的文章及其评论
@@ -26,5 +31,12 @@ GOOS=linux GOARCH=amd64 go build
   
 
 ## ⚙️ 配置
+
+config.json
+
+
+## 改进点
+* 使用context传递请求上下文参数，解除session, auth 与业务的耦合
+>参考 https://www.ddhigh.com/2018/10/17/golang-context-with-value.html
 
 
