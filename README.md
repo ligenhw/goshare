@@ -38,6 +38,8 @@ config.json
 ## 环境变量
 
 export DSN="gen:1234@tcp(192.168.199.231)/goshare?charset=utf8&parseTime=true"
+export ADDRESS=":8080"
+
 ./goshare
 
 ## 改进点

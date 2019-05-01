@@ -49,4 +49,8 @@ func loadEnv() {
 		Conf.Dsn = dsn
 		log.Println("load from env dsn : ", dsn)
 	}
+	if addr, ok := os.LookupEnv("PORT"); ok {
+		Conf.Address = addr
+		log.Println("load from env addr : ", addr)
+	}
 }
