@@ -1,6 +1,6 @@
 # goshare
 
-开源博客系统
+基于go标准库实现的 后台API服务，对应的前端项目: 点击[这里](https://github.com/ligenhw/goshare-website)
 
 [![Build Status](https://travis-ci.org/ligenhw/goshare.svg?branch=master)](https://travis-ci.org/ligenhw/goshare)
 [![codecov](https://codecov.io/gh/ligenhw/goshare/branch/master/graph/badge.svg)](https://codecov.io/gh/ligenhw/goshare)
@@ -28,23 +28,24 @@ go get -u github.com/ligenhw/goshare
 * 博客爬虫
   定期从 简书,CSDN,博客园 获取热门文章
   
-## ⚙️ 配置
+## ⚙️ 配置 & 环境变量
 
 config.json
 
-## 环境变量
-
 export DSN="gen:1234@tcp(192.168.199.231)/goshare?charset=utf8&parseTime=true"
+
 export ADDRESS=":8080"
 
 ## 构建执行
 
-GOOS=linux GOARCH=amd64 go build 
+GOOS=linux GOARCH=amd64 go build
+
 ./goshare
 
 ## Docker
 
 构建镜像
+
 docker build -t goshare .
 
 启动容器
