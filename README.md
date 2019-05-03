@@ -56,7 +56,7 @@ docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=123 -d mysql
 docker run -d --name some-goshare --link some-mysql:db -e DSN="root:123@tcp(db)/goshare?charset=utf8&parseTime=true" goshare
 
 ### nginx
-
+docker run --name some-nginx -p 80:80 -d -v  ~/goshare-website/build:/usr/share/nginx/html nginx
 
 
 ## 改进点
