@@ -13,6 +13,8 @@ type Config struct {
 	ReadTimeout  int64
 	WriteTimeout int64
 	Dsn          string
+	ClientId     string
+	ClientSecret string
 }
 
 var Conf Config

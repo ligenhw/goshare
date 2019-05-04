@@ -1,11 +1,12 @@
 # goshare
 
-基于go标准库实现的 后台API服务，对应的前端项目: 点击[这里](https://github.com/ligenhw/goshare-website)
+基于go标准库实现的 博客后端API服务。
 
 [![Build Status](https://travis-ci.org/ligenhw/goshare.svg?branch=master)](https://travis-ci.org/ligenhw/goshare)
 [![codecov](https://codecov.io/gh/ligenhw/goshare/branch/master/graph/badge.svg)](https://codecov.io/gh/ligenhw/goshare)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ligenhw/goshare)](https://goreportcard.com/report/github.com/ligenhw/goshare)
 
+前端项目: [https://github.com/ligenhw/goshare-website](https://github.com/ligenhw/goshare-website)
 
 ## 安装
 
@@ -42,23 +43,30 @@ GOOS=linux GOARCH=amd64 go build
 
 ./goshare
 
-## Docker
+## Docker方式部署
 
-构建镜像
+* 1.构建镜像
 
 docker build -t goshare .
 
-启动容器
+* 2.启动容器
 
 ### mysql
 docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=123 -d mysql
 
-### web
+### goshare
 docker run -d --name some-goshare --link some-mysql:db -e DSN="root:123@tcp(db)/goshare?charset=utf8&parseTime=true" goshare
 
 ### nginx
 docker run --name some-nginx -p 80:80 -d -v  ~/goshare-website/build:/usr/share/nginx/html nginx
 
+## Docker Compose 方式部署
+
+cd contrib/compose
+
+docker-compose up -d
+
+---
 
 ## 改进点
 * 使用context传递请求上下文参数，解除session, auth 与业务的耦合

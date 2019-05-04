@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/ligenhw/goshare/configration"
 	"github.com/ligenhw/goshare/user"
 )
 
@@ -23,10 +24,13 @@ type GhResp struct {
 }
 
 const (
-	token_url     = "https://github.com/login/oauth/access_token"
-	client_id     = "6f8ed9e6e9fc7b14cbc2"
-	client_secret = "d0b7a458886df8b4f6ed4f9a3684e88f67db99b1"
-	CONTENT_TYPE  = "application/json"
+	token_url    = "https://github.com/login/oauth/access_token"
+	CONTENT_TYPE = "application/json"
+)
+
+var (
+	client_id     = configration.Conf.ClientId
+	client_secret = configration.Conf.ClientSecret
 )
 
 var (
