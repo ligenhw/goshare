@@ -7,7 +7,7 @@ create table user (
     id Int auto_increment,
     user_name varchar(20) not null,
     password varchar(20) not null,
-    avatar_url varchar(40) DEFAULT '',
+    avatar_url varchar(100) DEFAULT '',
     time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     primary key (id),
     UNIQUE KEY (user_name)
