@@ -2,6 +2,8 @@ package store
 
 import (
 	"database/sql"
+	"path"
+	"runtime"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/ligenhw/goshare/configration"
@@ -15,4 +17,18 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	InitDb(getSqlFile(), false)
+}
+
+func getCurrentPath() string {
+	_, filename, _, _ := runtime.Caller(1)
+
+	return path.Dir(filename)
+}
+
+func getSqlFile() string {
+	currentPath := getCurrentPath()
+
+	return currentPath + "/schema.sql"
 }
