@@ -26,14 +26,13 @@ go get -u github.com/ligenhw/goshare
 * 搜索
 * 博客迁移
   支持迁移 简书,CSDN,博客园中的文章及其评论
-* 博客爬虫
-  定期从 简书,CSDN,博客园 获取热门文章
   
 ## ⚙️ 配置 & 环境变量
 
 config.json
 
-export DSN="gen:1234@tcp(192.168.199.231)/goshare?charset=utf8&parseTime=true"
+## db名称写mysql, 第一次启动会创建goshare数据库 并执行 use goshare
+export DSN="gen:1234@tcp(192.168.199.231)/mysql?charset=utf8&parseTime=true"
 
 export ADDRESS=":8080"
 
