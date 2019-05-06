@@ -7,7 +7,7 @@ services:
   - mysql
 
 before_install:
-  - sudo mysql < script/schema.sql
+  - sudo mysql < store/schema.sql
 
 script:
   - go test ./... -race -coverprofile=coverage.txt -covermode=atomic
