@@ -27,5 +27,8 @@ func init() {
 
 func main() {
 	p("Go share", version.Version, "started at", configration.Conf.Address)
-	http.ListenAndServe(configration.Conf.Address, nil)
+	err := http.ListenAndServe(configration.Conf.Address, nil)
+	if err != nil {
+		panic(err)
+	}
 }
