@@ -9,8 +9,10 @@ import (
 	"github.com/ligenhw/goshare/user"
 )
 
-var ErrorInput = errors.New("username or password is wrong")
-var ErrorAuthFailed = errors.New("auth failed")
+var (
+	ErrorInput      = errors.New("username or password is wrong")
+	ErrorAuthFailed = errors.New("auth failed")
+)
 
 func Check(username, password string) (u user.User, err error) {
 	u = user.User{UserName: username}
