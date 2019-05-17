@@ -32,7 +32,7 @@ go get -u github.com/ligenhw/goshare
 config.json
 
 ## db名称写mysql, 第一次启动会创建goshare数据库 并执行 use goshare
-export DSN="gen:1234@tcp(192.168.199.231)/mysql?charset=utf8&parseTime=true"
+export DSN="gen:1234@tcp(192.168.199.230)/mysql?charset=utf8&parseTime=true"
 
 export ADDRESS=":8080"
 
@@ -56,6 +56,8 @@ docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=123 -d mysql
 ### goshare
 docker run -d --name some-goshare --link some-mysql:db -e DSN="root:123@tcp(db)/goshare?charset=utf8&parseTime=true" goshare
 
+> 三方登录的api secret需要换成正式的
+
 ### nginx
 docker run --name some-nginx -p 80:80 -d -v  ~/goshare-website/build:/usr/share/nginx/html nginx
 
@@ -70,4 +72,3 @@ docker-compose up -d
 ## 改进点
 * 使用context传递请求上下文参数，解除session, auth 与业务的耦合
 >参考 https://www.ddhigh.com/2018/10/17/golang-context-with-value.html
-
