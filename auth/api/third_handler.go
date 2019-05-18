@@ -13,7 +13,7 @@ type Req struct {
 	Code string `json:"code"`
 }
 
-func postHandler(w http.ResponseWriter, r *http.Request) (err error) {
+func ghpostHandler(w http.ResponseWriter, r *http.Request) (err error) {
 	session, err := session.Instance.SessionStart(w, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -44,7 +44,7 @@ func ghLoginHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
 	switch r.Method {
 	case http.MethodPost:
-		err = postHandler(w, r)
+		err = ghpostHandler(w, r)
 	}
 
 	if err != nil {

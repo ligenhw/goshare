@@ -45,8 +45,7 @@ func getGhToken(code string) (token string, err error) {
 	}
 
 	var bs []byte
-	bs, err = json.Marshal(reqBody)
-	if err != nil {
+	if bs, err = json.Marshal(reqBody); err != nil {
 		return
 	}
 
@@ -57,8 +56,7 @@ func getGhToken(code string) (token string, err error) {
 
 	var resp *http.Response
 	log.Println("request to : ", token_url, "start")
-	resp, err = http.DefaultClient.Do(req)
-	if err != nil {
+	if resp, err = http.DefaultClient.Do(req); err != nil {
 		return
 	}
 	log.Println("request to : ", token_url, "end")
@@ -67,16 +65,14 @@ func getGhToken(code string) (token string, err error) {
 		defer resp.Body.Close()
 
 		var respBytes []byte
-		respBytes, err = ioutil.ReadAll(resp.Body)
-		if err != nil {
+		if respBytes, err = ioutil.ReadAll(resp.Body); err != nil {
 			return
 		}
 
 		log.Println(string(respBytes))
 
 		var ghresp GhResp
-		err = json.Unmarshal(respBytes, &ghresp)
-		if err != nil {
+		if err = json.Unmarshal(respBytes, &ghresp); err != nil {
 			return
 		}
 
@@ -114,8 +110,7 @@ func getGhUserInfo(token string) (info *GhUserInfo, err error) {
 
 	var resp *http.Response
 	log.Println("request to : ", user_url, "start")
-	resp, err = http.DefaultClient.Do(req)
-	if err != nil {
+	if resp, err = http.DefaultClient.Do(req); err != nil {
 		return
 	}
 	log.Println("request to : ", user_url, " end")
@@ -126,8 +121,7 @@ func getGhUserInfo(token string) (info *GhUserInfo, err error) {
 		defer resp.Body.Close()
 
 		var bs []byte
-		bs, err = ioutil.ReadAll(resp.Body)
-		if err != nil {
+		if bs, err = ioutil.ReadAll(resp.Body); err != nil {
 			return
 		}
 
@@ -135,8 +129,7 @@ func getGhUserInfo(token string) (info *GhUserInfo, err error) {
 		log.Println(string(bs))
 
 		info = new(GhUserInfo)
-		err = json.Unmarshal(bs, &info)
-		if err != nil {
+		if err = json.Unmarshal(bs, &info); err != nil {
 			return nil, err
 		}
 		return
@@ -145,14 +138,12 @@ func getGhUserInfo(token string) (info *GhUserInfo, err error) {
 
 func GhLogin(code string) (id int, err error) {
 	var token string
-	token, err = getGhToken(code)
-	if err != nil {
+	if token, err = getGhToken(code); err != nil {
 		return
 	}
 
 	var info *GhUserInfo
-	info, err = getGhUserInfo(token)
-	if err != nil {
+	if info, err = getGhUserInfo(token); err != nil {
 		return
 	}
 
@@ -162,11 +153,9 @@ func GhLogin(code string) (id int, err error) {
 		Time:      time.Now(),
 	}
 
-	err = u.QueryByName()
-	if err != nil {
+	if err = u.QueryByName(); err != nil {
 		log.Println(err)
-		err = u.Create()
-		if err != nil {
+		if err = u.Create(); err != nil {
 			return
 		}
 	}

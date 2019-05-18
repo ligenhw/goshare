@@ -47,4 +47,10 @@ create table comment (
     INDEX inx_time (time)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-
+create table qq_user (
+    openid varchar(50),
+    user_id Int,
+    content JSON,
+    PRIMARY KEY (openid),
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+)ENGINE=InnoDB DEFAULT CHARSET=utf8;

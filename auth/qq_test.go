@@ -6,7 +6,7 @@ package auth
 // )
 
 // func TestGetAccessToken(t *testing.T) {
-// 	token, err := GetAccessToken("66B63CB332B1A2E24C827181748E098D")
+// 	token, err := GetAccessToken("BC03BA88AC21CFCD167B381B837F7C78")
 // 	if err != nil {
 // 		t.Error(err)
 // 	}

@@ -8,11 +8,13 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+
+	"github.com/ligenhw/goshare/user"
 )
 
 const (
 	APP_ID        = "101576375"
-	APP_SECRET    = ""
+	APP_SECRET    = "ac40be21ae20662e6380f72a775aa4cb"
 	REDIRECT_URI  = "http://bestlang.cn/login"
 	TOKEN_URL     = "https://graph.qq.com/oauth2.0/token?"
 	USER_INFO_URL = "https://graph.qq.com/user/get_user_info?"
@@ -108,10 +110,6 @@ func GetOpenID(accessToken string) (openid string, err error) {
 	return
 }
 
-type QQUserInfo struct {
-	Nickname string `json:"nickname"`
-}
-
 func GetQQUserInfoUrl(accessToken, openid string) string {
 	val := make(url.Values)
 	val.Add("access_token", accessToken)
@@ -122,7 +120,7 @@ func GetQQUserInfoUrl(accessToken, openid string) string {
 	return USER_INFO_URL + p
 }
 
-func GetQQUserInfo(accessToken, openid string) (info *QQUserInfo, err error) {
+func GetQQUserInfo(accessToken, openid string) (content string, err error) {
 	url := GetQQUserInfoUrl(accessToken, openid)
 
 	var resp *http.Response
@@ -143,12 +141,35 @@ func GetQQUserInfo(accessToken, openid string) (info *QQUserInfo, err error) {
 
 		log.Println(string(bytes))
 
-		info = new(QQUserInfo)
-		if err = json.Unmarshal(bytes, info); err != nil {
-			log.Println(err)
-			return nil, err
+		content = string(bytes)
+	}
+
+	return
+}
+
+func QQLogin(code string) (id int, err error) {
+	var token string
+	if token, err = GetAccessToken(code); err != nil {
+		log.Println(err)
+		return
+	}
+
+	var openid string
+	if openid, err = GetOpenID(token); err != nil {
+		log.Println(err)
+		return
+	}
+
+	var u *user.User
+	if u, err = user.QueryUserByQQ(openid); err != nil {
+		var content string
+		if content, err = GetQQUserInfo(token, openid); err != nil {
+			return
+		} else if u, err = user.CreateUserByQQ(openid, content); err != nil {
+			return
 		}
 	}
 
+	id = u.Id
 	return
 }
