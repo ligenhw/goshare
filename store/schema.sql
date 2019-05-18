@@ -50,7 +50,7 @@ create table comment (
 create table qq_user (
     openid varchar(50),
     user_id Int,
-    content JSON,
+    content varchar(200),
     PRIMARY KEY (openid),
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
