@@ -17,12 +17,12 @@ go get -u github.com/ligenhw/goshare
 * 文章
 * 用户
 * 评论
-* 三方登录 github
+* 三方登录 github qq
 
 ## 计划加入的功能
 
 * 三方登陆
-  支持 qq , 微信
+  支持 微信
 * 搜索
 * 博客迁移
   支持迁移 简书,CSDN,博客园中的文章及其评论

@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/ligenhw/goshare/blog"
+	"github.com/ligenhw/goshare/user"
 )
 
 type args string
@@ -87,12 +88,33 @@ func scanDir(path string) {
 	}
 }
 
+func getOrCreateUser() int {
+	users, err := user.GetAllUser()
+	if err != nil {
+		panic(err)
+	}
+
+	if len(users) > 0 {
+		return users[0].Id
+	} else {
+		u := &user.User{
+			UserName: "test",
+			Password: "pass",
+		}
+		if err := u.Create(); err != nil {
+			panic(err)
+		}
+
+		return u.Id
+	}
+}
+
 func scanFile(path string) (err error) {
 	var content []byte
 	if content, err = ioutil.ReadFile(path); err == nil {
 		name := filepath.Base(path)
 		log.Println("scan file : ", name)
-		b := blog.Blog{UserId: 1, Title: strings.Split(name, ".")[0], Content: string(content)}
+		b := blog.Blog{UserId: getOrCreateUser(), Title: strings.Split(name, ".")[0], Content: string(content)}
 		err = b.Create()
 	}
 
