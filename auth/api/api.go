@@ -52,4 +52,5 @@ func init() {
 	http.HandleFunc("/api/logout/", handleLogout)
 	http.HandleFunc("/api/ghlogin/", ghLoginHandler)
 	http.HandleFunc("/api/qqlogin/", qqLoginHandler)
+	http.HandleFunc("/api/alipaylogin/", alipayLoginHandler)
 }

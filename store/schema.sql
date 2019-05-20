@@ -15,13 +15,12 @@ create table user (
 
 create table profile (
     id Int auto_increment,
+    openid varchar(50),
+    auth_type varchar(20),
     user_id Int,
-    gender varchar(20),
-    age int,
-    address varchar(40),
-    email varchar(20),
+    content varchar(200),
     PRIMARY KEY (id),
-    foreign key (user_id) REFERENCES user(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 create table blog (
@@ -47,10 +46,3 @@ create table comment (
     INDEX inx_time (time)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-create table qq_user (
-    openid varchar(50),
-    user_id Int,
-    content varchar(200),
-    PRIMARY KEY (openid),
-    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;

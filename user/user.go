@@ -20,13 +20,6 @@ type User struct {
 	Profile   Profile   `orm:"-"`
 }
 
-type Profile struct {
-	Gender  string
-	Age     int
-	Address string
-	Email   string
-}
-
 var (
 	o = orm.NewOrm(store.Db)
 )
