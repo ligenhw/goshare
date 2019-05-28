@@ -5,6 +5,7 @@
 [![Build Status](https://travis-ci.org/ligenhw/goshare.svg?branch=master)](https://travis-ci.org/ligenhw/goshare)
 [![codecov](https://codecov.io/gh/ligenhw/goshare/branch/master/graph/badge.svg)](https://codecov.io/gh/ligenhw/goshare)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ligenhw/goshare)](https://goreportcard.com/report/github.com/ligenhw/goshare)
+[![codebeat badge](https://codebeat.co/badges/ea8dd5a0-964f-4f34-8cae-c870629da46d)](https://codebeat.co/projects/github-com-ligenhw-goshare-master)
 
 前端项目: [https://github.com/ligenhw/goshare-website](https://github.com/ligenhw/goshare-website)
 
