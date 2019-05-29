@@ -7,11 +7,13 @@ import (
 )
 
 type Comment struct {
-	Id      int       `json:"id"`
-	BlogId  int       `json:"blogId"`
-	UserId  int       `json:"userId"`
-	Content string    `json:"content"`
-	Time    time.Time `json:"time"`
+	Id       int       `json:"id"`
+	BlogId   int       `json:"blogId"`
+	UserId   int       `json:"userId"`
+	ParentId *int      `json:"parentId" orm:"null"`
+	ReplyTo  *int      `json:"replyTo" orm:"null"`
+	Content  string    `json:"content"`
+	Time     time.Time `json:"time"`
 }
 
 func init() {

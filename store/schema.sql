@@ -38,11 +38,16 @@ create table comment (
     id Int auto_increment,
     blog_id Int,
     user_id Int,
+    parent_id Int,
+    reply_to Int,
     content varchar(500),
     time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (id),
     FOREIGN KEY (blog_id) REFERENCES blog(id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
-    INDEX inx_time (time)
+    FOREIGN KEY (parent_id) REFERENCES comment(id) ON DELETE CASCADE,
+    FOREIGN KEY (reply_to) REFERENCES user(id) ON DELETE CASCADE,
+    INDEX inx_time (time),
+    INDEX inx_blog_id (blog_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

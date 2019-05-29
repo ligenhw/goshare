@@ -130,29 +130,8 @@ func (d *dbBase) Read(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []string
 	log.Println(query)
 	log.Println(args)
 
-	colsNum := len(mi.fields.dbcols)
-	refs := make([]interface{}, colsNum)
-	for i := range refs {
-		// var ref interface{}
-		column := mi.fields.dbcols[i]
-		fi := mi.fields.GetByColumn(column)
-		switch fi.typ.Kind() {
-		case reflect.Int:
-			v := new(int)
-			refs[i] = v
-		case reflect.String:
-			v := new(string)
-			refs[i] = v
-		default:
-			switch fi.addrField.Interface().(type) {
-			case time.Time:
-				v := new(time.Time)
-				refs[i] = v
-			default:
-				log.Println("warning not support type : ", fi.typ.Kind())
-			}
-		}
-	}
+	refs := newRefs(mi)
+
 	row := q.QueryRow(query, args...)
 	if err := row.Scan(refs...); err != nil {
 		if err == sql.ErrNoRows {
@@ -261,7 +240,19 @@ func (d *dbBase) setColsValues(mi *modelInfo, ind *reflect.Value, cols []string,
 
 // set one value to struct column field.
 func (d *dbBase) setFieldValue(fi *fieldInfo, value interface{}, field reflect.Value) (interface{}, error) {
-	field.Set(reflect.ValueOf(value))
+	switch value.(type) {
+	case sql.NullInt64:
+		nint := value.(sql.NullInt64)
+		if nint.Valid {
+			val, _ := nint.Value()
+			field.SetInt(val.(int64))
+		} else {
+			field.Set(reflect.Zero(reflect.TypeOf(new(int))))
+		}
+	default:
+		field.Set(reflect.ValueOf(value))
+	}
+
 	return value, nil
 }
 
@@ -329,29 +320,7 @@ func (d *dbBase) ReadBatch(q *sql.DB, qs *QuerySeter, mi *modelInfo, cond *Condi
 	defer rs.Close()
 	slice := ind
 
-	colsNum := len(mi.fields.dbcols)
-	refs := make([]interface{}, colsNum)
-	for i := range refs {
-		// var ref interface{}
-		column := mi.fields.dbcols[i]
-		fi := mi.fields.GetByColumn(column)
-		switch fi.typ.Kind() {
-		case reflect.Int:
-			v := new(int)
-			refs[i] = v
-		case reflect.String:
-			v := new(string)
-			refs[i] = v
-		default:
-			switch fi.addrField.Interface().(type) {
-			case time.Time:
-				v := new(time.Time)
-				refs[i] = v
-			default:
-				log.Println("warning not support type : ", fi.typ.Kind())
-			}
-		}
-	}
+	refs := newRefs(mi)
 
 	var cnt int64
 	for rs.Next() {
@@ -374,4 +343,35 @@ func (d *dbBase) ReadBatch(q *sql.DB, qs *QuerySeter, mi *modelInfo, cond *Condi
 	}
 
 	return cnt, nil
+}
+
+func newRefs(mi *modelInfo) (refs []interface{}) {
+	colsNum := len(mi.fields.dbcols)
+	refs = make([]interface{}, colsNum)
+	for i := range refs {
+		// var ref interface{}
+		column := mi.fields.dbcols[i]
+		fi := mi.fields.GetByColumn(column)
+		switch fi.typ.Kind() {
+		case reflect.Int:
+			v := new(int)
+			refs[i] = v
+		case reflect.String:
+			v := new(string)
+			refs[i] = v
+		default:
+			switch fi.addrField.Interface().(type) {
+			case time.Time:
+				v := new(time.Time)
+				refs[i] = v
+			case *int:
+				v := new(sql.NullInt64)
+				refs[i] = v
+			default:
+				log.Println("warning not support type : ", fi.typ.Kind())
+			}
+		}
+	}
+
+	return
 }
