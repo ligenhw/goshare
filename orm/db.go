@@ -309,13 +309,13 @@ func (d *dbBase) ReadBatch(q *sql.DB, qs *QuerySeter, mi *modelInfo, cond *Condi
 	}
 	query := fmt.Sprintf("%s %s FROM %s %s %s %s", sqlSelect, sels, mi.table, where, orderBy, limit)
 
+	log.Println(query)
+	log.Println(args...)
+
 	rs, err := q.Query(query, args...)
 	if err != nil {
 		return 0, err
 	}
-
-	log.Println(query)
-	log.Println(args...)
 
 	defer rs.Close()
 	slice := ind

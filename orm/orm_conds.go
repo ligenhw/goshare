@@ -41,7 +41,7 @@ func (c Condition) Raw(sql string) *Condition {
 	if sql == "" {
 		panic(fmt.Errorf("<Condition.Raw> sql cannot empty"))
 	}
-	c.params = append(c.params, condValue{sql: sql})
+	c.params = append(c.params, condValue{sql: sql, isRaw: true})
 	return &c
 }
 

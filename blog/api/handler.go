@@ -15,12 +15,15 @@ import (
 )
 
 type CommentsResp struct {
-	Comments []*blog.Comment `json:"comments"`
-	Users    []*user.User    `json:"users"`
+	Comments []*blog.CommentWithChild `json:"comments"`
+	Users    []*user.User             `json:"users"`
 }
 
-type CommentReq struct {
-	Content string `json:"content"`
+type CreateCommentsReq struct {
+	BlogId          int    `json:"blogId"`
+	ParentCommentId *int   `json:"parentCommentId"`
+	ReplyTo         int    `json:"replyTo"`
+	Content         string `json:"content"`
 }
 
 // :blogId
@@ -31,19 +34,29 @@ func GetComment(w http.ResponseWriter, r *http.Request) (err error) {
 		return
 	}
 
-	var comments []*blog.Comment
-	comments, err = blog.QueryByBlogId(blogId)
+	var comments []*blog.CommentWithChild
+	comments, err = blog.QueryCommentsByBlogId(blogId)
 	if err != nil {
 		return
 	}
 
-	var userIds []interface{}
+	userIdsMap := make(map[int]bool, 0)
 	for _, comment := range comments {
-		userIds = append(userIds, comment.UserId)
+		userIdsMap[comment.ParentUserId] = true
+		for _, sub := range comment.SubComments {
+			if sub == nil {
+				continue
+			}
+			userIdsMap[sub.UserId] = true
+		}
 	}
 
-	users := make([]*user.User, 0)
-	if len(userIds) > 0 {
+	var users []*user.User
+	userIds := make([]interface{}, 0)
+	if len(userIdsMap) > 0 {
+		for k, _ := range userIdsMap {
+			userIds = append(userIds, k)
+		}
 		users, err = user.QueryUserWithIds(userIds...)
 		if err != nil {
 			return
@@ -67,14 +80,7 @@ func GetComment(w http.ResponseWriter, r *http.Request) (err error) {
 
 // :blogId
 func CreateComment(w http.ResponseWriter, r *http.Request) (err error) {
-	var blogId int
-	blogId, err = strconv.Atoi(path.Base(r.URL.Path))
-	if err != nil {
-		return
-	}
-
 	globalSession := session.Instance
-
 	var session session.Store
 	session, err = globalSession.SessionStart(w, r)
 	if err != nil {
@@ -90,13 +96,18 @@ func CreateComment(w http.ResponseWriter, r *http.Request) (err error) {
 	decoder := json.NewDecoder(r.Body)
 	defer r.Body.Close()
 
-	c := CommentReq{}
+	c := CreateCommentsReq{}
 	err = decoder.Decode(&c)
 	if err != nil {
 		return
 	}
 
-	err = blog.CreateComment(blogId, userID, c.Content)
+	if c.ParentCommentId != nil {
+		err = blog.CreateReply(c.BlogId, userID, *c.ParentCommentId, c.ReplyTo, c.Content)
+	} else {
+		_, err = blog.CreateComment(c.BlogId, userID, c.Content)
+	}
+
 	return
 }
 

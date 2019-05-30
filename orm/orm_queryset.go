@@ -42,7 +42,7 @@ func getCondSQL(cond *Condition) (where string, args []interface{}) {
 		wheres = append(wheres, w)
 	}
 
-	where = strings.Join(wheres, ", ")
+	where = strings.Join(wheres, "AND ")
 
 	if where != "" {
 		where = "WHERE " + where
