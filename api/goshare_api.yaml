@@ -9,7 +9,7 @@ info:
   license:
     name: "MIT"
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
-host: "www.bestlang.cn"
+host: "bestlang.cn"
 basePath: "/api"
 tags:
 - name: "article"
@@ -26,7 +26,7 @@ paths:
       tags:
       - "article"
       summary: 查询文章列表
-      description: ""
+      description: 查询所有文章
       operationId: GetArticles
       consumes:
       - "application/json"
@@ -36,9 +36,131 @@ paths:
         200:
           description: "successful operation"
           schema:
-            $ref: "#/definitions/ArticlesResp"
+            type: "array"
+            items:
+              $ref: "#/definitions/ArticlesResp"
         405:
           description: "Invalid input"
+    post:
+      tags:
+      - article
+      summary: 创建文章
+      description: 发布一篇文章
+      operationId: CreateArticle
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Pet object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: '#/definitions/Article'
+      responses:
+        200:
+          description: "successful operation"
+        405:
+          description: "Invalid input"
+    put:
+      tags:
+      - article
+      summary: 修改文章
+      description: 验证cookie, 验证权限，文章的作者可以操作
+      operationId: UpdateArticle
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Pet object that needs to be added to the store"
+        required: true
+        schema:
+          $ref: '#/definitions/Article'
+      responses:
+        200:
+          description: "successful operation"
+        405:
+          description: "Invalid input"
+  /article/{id}:
+    get:
+      tags:
+      - article
+      summary: 查询文章详情
+      description: 根据文章id查询文章内容和作者信息
+      operationId: GetArticle
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "文章id"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/ArticlesResp'
+    delete:
+      tags:
+      - article
+      summary: 删除文章
+      description: 验证cookie, 验证权限，文章的作者可以操作
+      operationId: DeleteArticle
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "文章id"
+        required: true
+        type: "integer"
+        format: "int64"
+      responses:
+        200:
+          description: "successful operation"
+  /user:
+    get:
+      tags:
+      - user
+      summary: 查询当前登录的用户信息
+      description: '接口验证请求cookie, 请求需要在cookie中携带sessionid'
+      operationId: GetUser
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: '#/definitions/User'
+        405:
+          description: "Invalid input"
+    post:
+      tags:
+      - user
+      summary: 创建用户
+      description: 注册时使用的创建用户接口
+      operationId: CreateUser
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/ArticlesResp"
   /comments:
     get:
       tags:
@@ -67,7 +189,7 @@ paths:
       tags:
       - "comment"
       summary: 创建评论
-      description: ""
+      description: 创建评论和回复评论
       operationId: CreateComment
       consumes:
       - "application/json"
@@ -159,6 +281,14 @@ definitions:
         type: string
         format: date-time
   
+  ArticlesResp:
+    type: object
+    properties:
+      article:
+        $ref: '#/definitions/Article'
+      user:
+        $ref: '#/definitions/User'
+  
   CreateCommentsReq:
     type: object
     properties:
@@ -170,13 +300,7 @@ definitions:
         type: string
       content:
         type: string
-  ArticlesResp:
-    type: object
-    properties:
-      article:
-        $ref: '#/definitions/Article'
-      user:
-        $ref: '#/definitions/User'
+  
   CommentsResp:
     type: object
     properties:
