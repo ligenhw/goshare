@@ -25,7 +25,7 @@ paths:
   /comments:
     get:
       tags:
-      - "comments"
+      - "comment"
       summary: 获取评论
       description: ""
       operationId: GetComment
@@ -40,11 +40,15 @@ paths:
         required: true
         type: integer
       responses:
+        200:
+          description: "successful operation"
+          schema:
+            $ref: "#/definitions/CommentsResp"
         405:
           description: "Invalid input"
     post:
       tags:
-      - "comments"
+      - "comment"
       summary: 创建评论
       description: ""
       operationId: CreateComment
@@ -58,10 +62,10 @@ paths:
         description: "评论结构"
         required: true
         schema:
-          $ref: "#/definitions/Comment"
+          $ref: "#/definitions/CreateCommentsReq"
       responses:
-        405:
-          description: "Invalid input"
+        200:
+          description: "successful operation"
 
 # model define
 definitions:
@@ -119,6 +123,18 @@ definitions:
       time:
         type: string
         format: date-time
+  
+  CreateCommentsReq:
+    type: object
+    properties:
+      blogId: 
+        type: string
+      parentCommentId:
+        type: string
+      replyTo:
+        type: string
+      content:
+        type: string
   
   CommentsResp:
     type: object
