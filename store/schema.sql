@@ -11,7 +11,7 @@ create table user (
     time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     primary key (id),
     UNIQUE KEY (user_name)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 create table profile (
     id Int auto_increment,
@@ -21,7 +21,7 @@ create table profile (
     content varchar(200),
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 create table blog (
     id Int auto_increment,
@@ -32,7 +32,7 @@ create table blog (
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     INDEX inx_time (time)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 create table comment (
     id Int auto_increment,
@@ -49,7 +49,7 @@ create table comment (
     FOREIGN KEY (reply_to) REFERENCES user(id) ON DELETE CASCADE,
     INDEX inx_time (time),
     INDEX inx_blog_id (blog_id)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8;
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 create table tag (
     id Int auto_increment,
