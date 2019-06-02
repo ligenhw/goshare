@@ -3,7 +3,7 @@ package blog
 import "testing"
 
 func TestTag(t *testing.T) {
-	tagNames := [...]string{"golang", "源码🐟"}
+	tagNames := [...]string{"golang", "源码"}
 	tagIds := [len(tagNames)]int64{}
 	var err error
 	if tagIds[0], err = CreateTag(tagNames[0]); err != nil {
