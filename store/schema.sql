@@ -51,3 +51,11 @@ create table comment (
     INDEX inx_blog_id (blog_id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+create table tag (
+    id Int auto_increment,
+    name varchar(20) not null,
+    time TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    primary key (id)
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+

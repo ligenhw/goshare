@@ -49,7 +49,9 @@ func TestComment(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	CreateComment(b.Id, u.Id, "test Comment3")
+	if _, err := CreateComment(b.Id, u.Id, "test Comment3🐟"); err != nil {
+		t.Fatal(err)
+	}
 
 	CreateReply(b.Id, u2.Id, int(c1), u.Id, "reply to c1")
 	CreateReply(b.Id, u.Id, int(c1), u2.Id, "i am receive reply from u")

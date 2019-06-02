@@ -31,7 +31,7 @@ go get -u github.com/ligenhw/goshare
 config.json
 
 ## db名称写mysql, 第一次启动会创建goshare数据库 并执行 use goshare
-export DSN="gen:1234@tcp(192.168.199.230)/mysql?charset=utf8&parseTime=true"
+export DSN="gen:1234@tcp(192.168.199.230)/mysql?charset=utf8mb4&parseTime=true"
 
 export ADDRESS=":8080"
 
