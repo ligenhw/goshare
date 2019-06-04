@@ -2,4 +2,4 @@ package version
 
 var Package = "github.com/ligenhw/goshare"
 
-var Version = "v0.0.2"
+var Version = "v0.0.3"
