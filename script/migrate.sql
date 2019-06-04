@@ -17,5 +17,9 @@ show create table comment;
 alter table comment drop foreign key comment_ibfk_3;
 alter table comment drop foreign key comment_ibfk_4;
 
+-- 修改字符集
+ALTER TABLE comment DEFAULT CHARACTER SET utf8mb4;
+alter table comment convert to character set utf8mb4;
 
-
+ALTER TABLE blog DEFAULT CHARACTER SET utf8mb4;
+alter table blog convert to character set utf8mb4;
