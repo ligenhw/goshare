@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: GoShare项目后端接口文档
-  version: "0.0.2"
+  version: "0.0.3"
   title: "Goshare"
   termsOfService: "https://www.bestlang.cn/"
   contact:
@@ -133,7 +133,7 @@ paths:
       tags:
       - user
       summary: 查询当前登录的用户信息
-      description: '接口验证请求cookie, 请求需要在cookie中携带sessionid'
+      description: '接口验证请求cookie, 请求需要在cookie中携带sessionId, 未登录会分配sessionId'
       operationId: GetUser
       consumes:
       - "application/json"
@@ -156,11 +156,55 @@ paths:
       - "application/json"
       produces:
       - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "用户账号密码信息"
+        required: true
+        schema:
+          $ref: '#/definitions/User'
       responses:
         200:
           description: "successful operation"
-          schema:
-            $ref: "#/definitions/ArticlesResp"
+        405:
+          description: "Invalid input"
+  /login:
+    post:
+      tags:
+      - user
+      summary: 登录
+      description: 用户登录 校验成功后返回cookie携带sessionid
+      operationId: Login
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "用户账号密码信息"
+        required: true
+        schema:
+          $ref: '#/definitions/User'
+      responses:
+        200:
+          description: "successful operation"
+        405:
+          description: "账号或密码错误"
+  /logout:
+    post:
+      tags:
+        - user
+      summary: 登出
+      description: 用户登出,服务端删除该sessionId对应的登录状态。
+      operationId: Logout
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
   /comments:
     get:
       tags:

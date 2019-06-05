@@ -44,3 +44,7 @@ insert into blog (user_id, title, content) values
  ## test content.
  "
  );
+
+ insert into comment (user_id, content) 
+  values (7, 'about comment1')
+  ;

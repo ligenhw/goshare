@@ -10,11 +10,16 @@ import (
 )
 
 var (
-	ErrorInput      = errors.New("username or password is wrong")
+	errorInput      = errors.New("username or password is wrong")
 	ErrorAuthFailed = errors.New("auth failed")
 )
 
-func Check(username, password string) (u user.User, err error) {
+func check(username, password string) (u user.User, err error) {
+	if password == "" {
+		err = errorInput
+		return
+	}
+	
 	u = user.User{UserName: username}
 	err = u.QueryByName()
 	if err != nil {
@@ -25,13 +30,13 @@ func Check(username, password string) (u user.User, err error) {
 		return
 	}
 
-	err = ErrorInput
+	err = errorInput
 	return
 }
 
 func Login(username, password string, session session.Store) (err error) {
 	var u user.User
-	if u, err = Check(username, password); err == nil {
+	if u, err = check(username, password); err == nil {
 		session.Set("userID", u.Id)
 	}
 
