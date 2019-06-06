@@ -29,6 +29,7 @@ func init() {
 	orm.RegisterModel(new(Comment))
 }
 
+// CreateComment create a parent comment
 func CreateComment(blogId, userId int, content string) (id int64, err error) {
 	b := &Comment{
 		BlogId:  blogId,
@@ -58,12 +59,12 @@ const queryCommentsList = `
 select c1.id parent_id, c1.user_id parent_user_id, c1.content parent_content, c1.time parent_time,
  c2.id, c2.user_id, c2.reply_to, c2.content, c2.time from
  comment c1 left join comment c2 on c2.parent_id = c1.id
- where c1.parent_id is null and c1.blog_id = ? and ( c2.blog_id = ? or c2.blog_id is null)
- order by c1.id desc, c1.time desc, c2.time ;`
+ where c1.parent_id is null and c1.blog_id = ?
+ order by c1.time desc, c2.time ;`
 
 func QueryCommentsByBlogId(blogId int) (comments []*CommentWithChild, err error) {
 	var rows *sql.Rows
-	if rows, err = db.Query(queryCommentsList, blogId, blogId); err != nil {
+	if rows, err = db.Query(queryCommentsList, blogId); err != nil {
 		return
 	}
 
