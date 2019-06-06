@@ -101,12 +101,15 @@ func (d *dbBase) Insert(q *sql.DB, mi *modelInfo, ind reflect.Value) (int64, err
 	return id, err
 }
 
+// TODO: implents
 func (d *dbBase) InsertMulti(q *sql.DB, mi *modelInfo, sind reflect.Value) (int64, error) {
 	length := sind.Len()
 	for i := 1; i <= length; i++ {
 
-		ind := reflect.Indirect(sind.Index(i - 1))
+		// ind := reflect.Indirect(sind.Index(i - 1))
 	}
+
+	return 0, nil
 }
 
 func (d *dbBase) Read(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []string) error {

@@ -4,5 +4,5 @@
 
 -- 预制的标签
 insert into tag (name)
- values('GOLANG'), ('JAVA'), ('PYTHON'), ('算法'), ('MYSQL'), ('LINUX'), ('REDIS'), ('KAFKA', 'ANDROID');
+ values('GOLANG'), ('JAVA'), ('PYTHON'), ('ANDROID'), ('MYSQL'), ('LINUX'), ('REDIS'), ('KAFKA');
 
