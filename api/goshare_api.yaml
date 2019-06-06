@@ -13,11 +13,13 @@ host: "bestlang.cn"
 basePath: "/api"
 tags:
 - name: "article"
-  description: "文章"
+  description: 文章
+- name: tag
+  description: 标签
 - name: "user"
-  description: "用户"
+  description: 用户
 - name: "comment"
-  description: "评论"
+  description: 评论
 schemes:
 - "https"
 paths:
@@ -128,6 +130,26 @@ paths:
       responses:
         200:
           description: "successful operation"
+  /tag:
+    get:
+      tags:
+      - tag
+      summary: 查询标签
+      description: 查询所有标签
+      operationId: GetTags
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Tag"
+        405:
+          description: "Invalid input"
   /user:
     get:
       tags:
@@ -269,6 +291,14 @@ definitions:
       time:
         type: string
         format: date-time
+  Tag:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      name:
+        type: string
 
   User:
     type: object

@@ -58,4 +58,13 @@ create table tag (
     primary key (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+create table tag_blog_rel (
+    id Int auto_increment,
+    tag_id Int,
+    blog_id Int,
+    primary key (id),
+    FOREIGN KEY (tag_id) REFERENCES tag(id) ON DELETE CASCADE,
+    FOREIGN KEY (blog_id) REFERENCES blog(id) ON DELETE CASCADE
+)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 

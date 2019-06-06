@@ -101,6 +101,14 @@ func (d *dbBase) Insert(q *sql.DB, mi *modelInfo, ind reflect.Value) (int64, err
 	return id, err
 }
 
+func (d *dbBase) InsertMulti(q *sql.DB, mi *modelInfo, sind reflect.Value) (int64, error) {
+	length := sind.Len()
+	for i := 1; i <= length; i++ {
+
+		ind := reflect.Indirect(sind.Index(i - 1))
+	}
+}
+
 func (d *dbBase) Read(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []string) error {
 	var whereCols []string
 	var args []interface{}

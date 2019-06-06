@@ -7,10 +7,10 @@ type Tag struct {
 	Name string `json:"name"`
 }
 
-type BlogTagRel struct {
+type TagBlogRel struct {
 	Id     int
-	BlogId int
 	TagId  int
+	BlogId int
 }
 
 func init() {
@@ -41,4 +41,8 @@ func GetTags() (tags []*Tag, err error) {
 	_, err = qb.OrderBy("-time").All(&tags)
 
 	return
+}
+
+func AddTagsToBlog(blogId int, tagIds ...int) {
+	db.Exec("")
 }
