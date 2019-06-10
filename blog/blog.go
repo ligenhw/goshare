@@ -52,9 +52,16 @@ func (b *Blog) QueryById() (err error) {
 	return
 }
 
-func GetAllBlogs() (blogs []*Blog, err error) {
+func GetAllBlogs(limit, offset int) (blogs []*Blog, err error) {
 	blogs = make([]*Blog, 0)
 	qb := o.QueryTable(new(Blog))
-	_, err = qb.OrderBy("-time").All(&blogs)
+	_, err = qb.LimitAndOffset(limit, offset).OrderBy("-time").All(&blogs)
+	return
+}
+
+func GetArticleByUID(limit, offset, uid int) (blogs []*Blog, err error) {
+	blogs = make([]*Blog, 0)
+	qb := o.QueryTable(new(Blog))
+	_, err = qb.LimitAndOffset(limit, offset).Filter("user_id", uid).OrderBy("-time").All(&blogs)
 	return
 }
