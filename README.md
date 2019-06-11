@@ -6,7 +6,7 @@
 [![codecov](https://codecov.io/gh/ligenhw/goshare/branch/master/graph/badge.svg)](https://codecov.io/gh/ligenhw/goshare)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ligenhw/goshare)](https://goreportcard.com/report/github.com/ligenhw/goshare)
 [![codebeat badge](https://codebeat.co/badges/ea8dd5a0-964f-4f34-8cae-c870629da46d)](https://codebeat.co/projects/github-com-ligenhw-goshare-master)
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fligenhw%2Fgoshare.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fligenhw%2Fgoshare?ref=badge_shield)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fligenhw%2Fgoshare.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fligenhw%2Fgoshare?ref=badge_shield)
 
 前端项目: [https://github.com/ligenhw/goshare-website](https://github.com/ligenhw/goshare-website)
 
@@ -68,6 +68,5 @@ docker-compose up -d
 
 ---
 
-## 改进点
-* 使用context传递请求上下文参数，解除session, auth 与业务的耦合
->参考 https://www.ddhigh.com/2018/10/17/golang-context-with-value.html
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fligenhw%2Fgoshare.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fligenhw%2Fgoshare?ref=badge_large)
