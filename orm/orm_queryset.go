@@ -9,8 +9,8 @@ import (
 type QuerySeter struct {
 	mi       *modelInfo
 	cond     *Condition
-	limit    int64
-	offset   int64
+	limit    int
+	offset   int
 	orders   []string
 	distinct bool
 	orm      *orm
@@ -94,5 +94,11 @@ func (o *QuerySeter) All(container interface{}, cols ...string) (int64, error) {
 // "column" means ASC, "-column" means DESC.
 func (o *QuerySeter) OrderBy(exprs ...string) *QuerySeter {
 	o.orders = exprs
+	return o
+}
+
+func (o *QuerySeter) LimitAndOffset(limit, offset int) *QuerySeter {
+	o.limit = limit
+	o.offset = offset
 	return o
 }

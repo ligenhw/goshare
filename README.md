@@ -68,10 +68,5 @@ docker-compose up -d
 
 ---
 
-## 改进点
-* 使用context传递请求上下文参数，解除session, auth 与业务的耦合
->参考 https://www.ddhigh.com/2018/10/17/golang-context-with-value.html
-
-
 ## License
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fligenhw%2Fgoshare.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fligenhw%2Fgoshare?ref=badge_large)

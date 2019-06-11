@@ -6,9 +6,9 @@ import (
 )
 
 // generate limit sql.
-func getLimitSQL(mi *modelInfo, offset int64, limit int64) (limits string) {
+func getLimitSQL(mi *modelInfo, offset int, limit int) (limits string) {
 	if limit == 0 {
-		limit = int64(DefaultRowsLimit)
+		limit = DefaultRowsLimit
 	}
 	if limit < 0 {
 		// no limit

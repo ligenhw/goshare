@@ -33,9 +33,29 @@ func Get(w http.ResponseWriter, r *http.Request) (err error) {
 		}
 		result = bd
 	} else {
-		result, err = blog.GetAllBlogs()
-		if err != nil {
+
+		var limitN int
+		if limitN, err = getQuery(r, "limit", 0); err != nil {
 			return
+		}
+
+		var offsetN int
+		if offsetN, err = getQuery(r, "offset", 0); err != nil {
+			return
+		}
+
+		if userIDStr := r.URL.Query().Get("userId"); userIDStr == "" {
+			if result, err = blog.GetAllBlogs(limitN, offsetN); err != nil {
+				return
+			}
+		} else {
+			var uid int
+			if uid, err = strconv.Atoi(userIDStr); err != nil {
+				return
+			}
+			if result, err = blog.GetArticleByUID(limitN, offsetN, uid); err != nil {
+				return
+			}
 		}
 	}
 
@@ -147,6 +167,16 @@ func checkBlogOpPermission(w http.ResponseWriter, r *http.Request, blog blog.Blo
 		err = errors.New(fmt.Sprintf("do not have blog op permission"))
 	}
 
+	return
+}
+
+func getQuery(r *http.Request, key string, defValue int) (value int, err error) {
+	var valueStr string
+	if valueStr = r.URL.Query().Get(key); valueStr == "" {
+		value = defValue
+		return
+	}
+	value, err = strconv.Atoi(valueStr)
 	return
 }
 

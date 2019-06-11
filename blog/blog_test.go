@@ -29,7 +29,7 @@ func TestBlog(t *testing.T) {
 		t.Error(err)
 	}
 
-	blogs, err := GetAllBlogs()
+	blogs, err := GetAllBlogs(100, 0)
 	if err != nil {
 		t.Error(err)
 	}
