@@ -34,6 +34,21 @@ paths:
       - "application/json"
       produces:
       - "application/json"
+      parameters:
+      - in: query
+        name: limit
+        type: integer
+        description: 每页数量
+        default: 10
+      - in: query
+        name: offset
+        type: integer
+        description: 偏移量
+        default: 0
+      - in: query
+        name: userId
+        type: integer
+        description: 用户id
       responses:
         200:
           description: "successful operation"
@@ -228,6 +243,27 @@ paths:
         200:
           description: "successful operation"
   /comments:
+    post:
+      tags:
+      - "comment"
+      summary: 创建评论
+      description: 创建评论和回复评论
+      operationId: CreateComment
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "评论结构"
+        required: true
+        schema:
+          $ref: "#/definitions/CreateCommentsReq"
+      responses:
+        200:
+          description: "successful operation"
+  /comments/{blogId}:
     get:
       tags:
       - "comment"
@@ -251,26 +287,6 @@ paths:
             $ref: "#/definitions/CommentsResp"
         405:
           description: "Invalid input"
-    post:
-      tags:
-      - "comment"
-      summary: 创建评论
-      description: 创建评论和回复评论
-      operationId: CreateComment
-      consumes:
-      - "application/json"
-      produces:
-      - "application/json"
-      parameters:
-      - in: "body"
-        name: "body"
-        description: "评论结构"
-        required: true
-        schema:
-          $ref: "#/definitions/CreateCommentsReq"
-      responses:
-        200:
-          description: "successful operation"
 
 # model define
 definitions:
