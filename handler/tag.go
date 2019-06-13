@@ -1,4 +1,4 @@
-package api
+package handler
 
 import (
 	"encoding/json"
@@ -7,6 +7,7 @@ import (
 	"github.com/ligenhw/goshare/blog"
 )
 
+// TagHandler : get tags info
 func TagHandler(w http.ResponseWriter, r *http.Request) {
 	if tags, err := blog.GetTags(); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -15,8 +16,4 @@ func TagHandler(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("content-type", "application/json")
 		w.Write(bytes)
 	}
-}
-
-func init() {
-	http.HandleFunc("/api/tag/", TagHandler)
 }
