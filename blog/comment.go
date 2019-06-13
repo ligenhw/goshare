@@ -110,6 +110,13 @@ func QueryCommentsByBlogId(blogId int) (comments []*CommentWithChild, err error)
 	return
 }
 
+func QueryCommentsByReply(replyTo int) (c []*Comment, err error) {
+	c = make([]*Comment, 0)
+	qb := o.QueryTable(new(Comment))
+	_, err = qb.Filter("reply_to", replyTo).OrderBy("-time").All(&c)
+	return
+}
+
 // func QueryByBlogId(blogId int) (comments []*Comment, err error) {
 // 	comments = make([]*Comment, 0)
 // 	qs := o.QueryTable(new(Comment))

@@ -73,8 +73,7 @@ func GetComment(w http.ResponseWriter, r *http.Request) (err error) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	encoder := json.NewEncoder(w)
-	err = encoder.Encode(&resp)
+	err = json.NewEncoder(w).Encode(&resp)
 	return
 }
 
@@ -120,10 +119,6 @@ func CommentsHandler(w http.ResponseWriter, r *http.Request) {
 		err = GetComment(w, r)
 	case http.MethodPost:
 		err = CreateComment(w, r)
-		// case http.MethodDelete:
-		// 	err = Delete(w, r)
-		// case http.MethodPut:
-		// 	err = Put(w, r)
 	}
 
 	if err != nil {
