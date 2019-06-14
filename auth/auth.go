@@ -19,7 +19,7 @@ func check(username, password string) (u user.User, err error) {
 		err = errorInput
 		return
 	}
-	
+
 	u = user.User{UserName: username}
 	err = u.QueryByName()
 	if err != nil {

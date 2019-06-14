@@ -20,6 +20,8 @@ tags:
   description: 用户
 - name: "comment"
   description: 评论
+- name: oauth
+  description: 三方登录
 schemes:
 - "https"
 paths:
@@ -287,6 +289,70 @@ paths:
             $ref: "#/definitions/CommentsResp"
         405:
           description: "Invalid input"
+  
+  /ghlogin:
+    post:
+      tags:
+      - oauth
+      summary: 登录
+      description: Github 账号登录 校验成功后返回cookie携带sessionid
+      operationId: GhLogin
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "github code"
+        required: true
+        schema:
+          $ref: '#/definitions/OAuthReq'
+      responses:
+        200:
+          description: "successful operation"
+  /qqlogin:
+    post:
+      tags:
+      - oauth
+      summary: 登录
+      description: qq 账号登录 校验成功后返回cookie携带sessionid
+      operationId: QqLogin
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "github code"
+        required: true
+        schema:
+          $ref: '#/definitions/OAuthReq'
+      responses:
+        200:
+          description: "successful operation"
+  /alipaylogin:
+    post:
+      tags:
+      - oauth
+      summary: 登录
+      description: 支付宝 账号登录 校验成功后返回cookie携带sessionid
+      operationId: AlipayLogin
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "github code"
+        required: true
+        schema:
+          $ref: '#/definitions/OAuthReq'
+      responses:
+        200:
+          description: "successful operation"
 
 # model define
 definitions:
@@ -402,4 +468,10 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/User"
+  
+  OAuthReq:
+    type: object
+    properties:
+      code: 
+        type: string
   

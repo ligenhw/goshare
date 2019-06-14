@@ -127,7 +127,7 @@ func (manager *Manager) SessionDestroy(w http.ResponseWriter, r *http.Request) {
 		Path:     "/",
 		HttpOnly: true,
 		// Expires:  time.Now(),
-		MaxAge:   -1,
+		MaxAge: -1,
 	}
 	http.SetCookie(w, cookie)
 }

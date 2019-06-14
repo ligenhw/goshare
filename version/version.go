@@ -1,5 +1,7 @@
 package version
 
+// Package info
 var Package = "github.com/ligenhw/goshare"
 
-var Version = "v0.0.3"
+// Version info
+var Version = "v0.0.4"

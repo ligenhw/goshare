@@ -1,15 +1,15 @@
-package api
+package handler
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 
 	"github.com/ligenhw/goshare/auth"
 	"github.com/ligenhw/goshare/session"
 )
 
-func alipayPostHandler(w http.ResponseWriter, r *http.Request) (err error) {
+// AlipayLogin github login
+func AlipayLogin(w http.ResponseWriter, r *http.Request) {
 	session, err := session.Instance.SessionStart(w, r)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -17,7 +17,7 @@ func alipayPostHandler(w http.ResponseWriter, r *http.Request) (err error) {
 
 	defer r.Body.Close()
 
-	var req Req
+	var req OAuthReq
 	decoder := json.NewDecoder(r.Body)
 	err = decoder.Decode(&req)
 	if err != nil {
@@ -31,18 +31,4 @@ func alipayPostHandler(w http.ResponseWriter, r *http.Request) (err error) {
 
 	session.Set("userID", uid)
 	return
-}
-
-func alipayLoginHandler(w http.ResponseWriter, r *http.Request) {
-	log.Println(r.URL, r.Method)
-
-	var err error
-	switch r.Method {
-	case http.MethodPost:
-		err = alipayPostHandler(w, r)
-	}
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 }
