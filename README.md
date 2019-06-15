@@ -1,6 +1,6 @@
-# goshare
+<h1 align="center"><a href="https://www.bestlang.cn" target="_blank">goshare</a></h1>
 
-基于go标准库实现的 博客后端API服务。
+> 基于go标准库实现的 博客后端API服务
 
 [![Build Status](https://travis-ci.org/ligenhw/goshare.svg?branch=master)](https://travis-ci.org/ligenhw/goshare)
 [![codecov](https://codecov.io/gh/ligenhw/goshare/branch/master/graph/badge.svg)](https://codecov.io/gh/ligenhw/goshare)
@@ -10,15 +10,30 @@
 
 前端项目: [https://github.com/ligenhw/goshare-website](https://github.com/ligenhw/goshare-website)
 
-## 安装
 
-go get -u github.com/ligenhw/goshare
+## Contents 目录
 
-## 功能
+- [Introduction 介绍](#introduction-介绍)
+- [功能 🔥](#功能-🔥)
+- [计划加入的功能](#计划加入的功能)
+- [⚙️ 配置 & 环境变量](#⚙️-配置-&-环境变量)
+- [构建执行](#构建执行)
+- [Docker方式部署](#Docker方式部署)
+- [Docker Compose 方式部署](#Docker-Compose-方式部署)
+- [License](#License)
+
+## Introduction 介绍
+
+goshare is a blog web api service by golang.  
+goshare 是基于go标准库实现的 博客后端API服务。
+
+
+## 功能 🔥
 
 * 文章
 * 用户
 * 评论
+* 标签
 * 三方登录 github qq 支付宝
 
 ## 计划加入的功能
@@ -26,20 +41,27 @@ go get -u github.com/ligenhw/goshare
 * 搜索
 * 博客迁移
   支持迁移 简书,CSDN,博客园中的文章及其评论
-  
+
+
 ## ⚙️ 配置 & 环境变量
 
-config.json
+生产环境: configration/config.json  
+开发环境: configration/config.dev.json 
 
+环境变量:
+
+```bash
 export DSN="gen:1234@tcp(192.168.199.230)/goshare?charset=utf8mb4&parseTime=true"
-
 export ADDRESS=":8080"
+```
 
 ## 构建执行
 
+```bash
 GOOS=linux GOARCH=amd64 go build
 
 ./goshare
+```
 
 ## Docker方式部署
 
@@ -50,21 +72,29 @@ docker build -t goshare .
 * 2.启动容器
 
 ### mysql
+```bash
 docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=123 -d mysql
+```
 
 ### goshare
+```bash
 docker run -d --name some-goshare --link some-mysql:db -e DSN="root:123@tcp(db)/goshare?charset=utf8&parseTime=true" goshare
+```
 
 > 三方登录的api secret需要换成正式的
 
 ### nginx
+```bash
 docker run --name some-nginx -p 80:80 -d -v  ~/goshare-website/build:/usr/share/nginx/html nginx
+```
 
 ## Docker Compose 方式部署
 
+```bash
 cd contrib/compose
 
 docker-compose up -d
+```
 
 ---
 
