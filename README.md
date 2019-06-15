@@ -14,9 +14,9 @@
 ## Contents 目录
 
 - [Introduction 介绍](#introduction-介绍)
-- [功能 🔥](#功能-🔥)
+- [功能 🔥](#功能-)
 - [计划加入的功能](#计划加入的功能)
-- [⚙️ 配置 & 环境变量](#⚙️-配置-&-环境变量)
+- [配置 & 环境变量️️ ️⚙️](#配置---环境变量-)
 - [构建执行](#构建执行)
 - [Docker方式部署](#Docker方式部署)
 - [Docker Compose 方式部署](#Docker-Compose-方式部署)
@@ -66,8 +66,9 @@ GOOS=linux GOARCH=amd64 go build
 ## Docker方式部署
 
 * 1.构建镜像
-
+```bash
 docker build -t goshare .
+```
 
 * 2.启动容器
 
