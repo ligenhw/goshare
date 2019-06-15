@@ -3,6 +3,7 @@ package session
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -60,7 +61,7 @@ func NewManager(provideName string) (*Manager, error) {
 	defer instanceLock.Unlock()
 
 	if Instance == nil {
-		defaultTime := int64(60 * 10)
+		defaultTime := int64(60 * 30)
 		provider.SessionInit(defaultTime)
 
 		Instance = &Manager{
@@ -78,7 +79,8 @@ func (manager *Manager) GetProvider() Provider {
 	return manager.provider
 }
 
-func (manager *Manager) SessionStart(w http.ResponseWriter, r *http.Request) (session Store, err error) {
+// SessionExist check weather hava a session
+func (manager *Manager) SessionExist(r *http.Request) (session Store, err error) {
 	sid, err := manager.getSid(r)
 	if err != nil {
 		return nil, err
@@ -88,14 +90,18 @@ func (manager *Manager) SessionStart(w http.ResponseWriter, r *http.Request) (se
 		return manager.provider.SessionRead(sid)
 	}
 
-	sid, err = manager.sessionID()
-	if err != nil {
-		return nil, err
+	return nil, errors.New("no session")
+}
+
+// CreateSession create a session
+func (manager *Manager) CreateSession(w http.ResponseWriter, r *http.Request) (session Store, err error) {
+	var sid string
+	if sid, err = manager.sessionID(); err != nil {
+		return
 	}
 
-	session, err = manager.provider.SessionRead(sid)
-	if err != nil {
-		return nil, err
+	if session, err = manager.provider.SessionRead(sid); err != nil {
+		return
 	}
 	cookie := &http.Cookie{
 		Name:     manager.CookieName,
@@ -113,6 +119,16 @@ func (manager *Manager) SessionStart(w http.ResponseWriter, r *http.Request) (se
 	return
 }
 
+// SessionStart get or create a session
+func (manager *Manager) SessionStart(w http.ResponseWriter, r *http.Request) (session Store, err error) {
+	if session, err = manager.SessionExist(r); err == nil {
+		return
+	}
+
+	return manager.CreateSession(w, r)
+}
+
+// SessionDestroy remove session in provider, and make cookie invalidate
 func (manager *Manager) SessionDestroy(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie(manager.CookieName)
 	if err != nil || cookie.Value == "" {

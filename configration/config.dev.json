@@ -1,0 +1,8 @@
+{
+    "Address"        : ":8080",
+    "ReadTimeout"    : 10,
+    "WriteTimeout"   : 600,
+    "Dsn": "gen:1234@tcp(192.168.199.230)/goshare?charset=utf8mb4&parseTime=true",
+    "ClientId": "6f8ed9e6e9fc7b14cbc2",
+    "ClientSecret": "d0b7a458886df8b4f6ed4f9a3684e88f67db99b1"
+}

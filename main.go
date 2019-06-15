@@ -24,25 +24,29 @@ func init() {
 	go globalSession.GC()
 }
 
+var (
+	u = middleware.CheckUser
+)
+
 func main() {
 	p("Go share", version.Version, "started at", configration.Conf.Address)
 
 	r := mux.NewRouter()
 	r.Use(middleware.LoggingMiddleware)
 
-	r.HandleFunc("/api/user", handler.GetUser).Methods("GET")
+	r.HandleFunc("/api/user", u(handler.GetUser)).Methods("GET")
 	r.HandleFunc("/api/user", handler.CreateUser).Methods("POST")
 	r.HandleFunc("/api/login", handler.Login).Methods("POST")
 	r.HandleFunc("/api/logout", handler.Logout).Methods("POST")
 
 	r.HandleFunc("/api/article", handler.GetArticles).Methods("GET")
-	r.HandleFunc("/api/article", handler.CreateArticle).Methods("POST")
-	r.HandleFunc("/api/article", handler.UpdateArticle).Methods("PUT")
+	r.HandleFunc("/api/article", u(handler.CreateArticle)).Methods("POST")
+	r.HandleFunc("/api/article", u(handler.UpdateArticle)).Methods("PUT")
 	r.HandleFunc("/api/article/{id}", handler.GetArticleByID).Methods("GET")
-	r.HandleFunc("/api/article/{id}", handler.DeleteArticle).Methods("DELETE")
+	r.HandleFunc("/api/article/{id}", u(handler.DeleteArticle)).Methods("DELETE")
 
 	r.HandleFunc("/api/comment/{blogId}", handler.GetComment).Methods("GET")
-	r.HandleFunc("/api/comment", handler.CreateComment).Methods("POST")
+	r.HandleFunc("/api/comment", u(handler.CreateComment)).Methods("POST")
 
 	r.HandleFunc("/api/tag", handler.TagHandler)
 

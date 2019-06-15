@@ -2,7 +2,6 @@ package auth
 
 import (
 	"errors"
-	"net/http"
 
 	"github.com/ligenhw/goshare/session"
 
@@ -11,10 +10,11 @@ import (
 
 var (
 	errorInput      = errors.New("username or password is wrong")
-	ErrorAuthFailed = errors.New("auth failed")
+	errorAuthFailed = errors.New("auth failed")
 )
 
-func check(username, password string) (u user.User, err error) {
+// Check password if correct return the user
+func Check(username, password string) (u user.User, err error) {
 	if password == "" {
 		err = errorInput
 		return
@@ -34,38 +34,13 @@ func check(username, password string) (u user.User, err error) {
 	return
 }
 
-func Login(username, password string, session session.Store) (err error) {
-	var u user.User
-	if u, err = check(username, password); err == nil {
-		session.Set("userID", u.Id)
-	}
-
-	return
-}
-
-func Logout(session session.Store) (err error) {
-	err = session.Delete("userID")
-	return
-}
-
 func Auth(session session.Store) (userID int, err error) {
 	value := session.Get("userID")
 	if value == nil || value.(int) == 0 {
-		err = ErrorAuthFailed
+		err = errorAuthFailed
 		return
 	}
 
 	userID = value.(int)
-	return
-}
-
-func GetAuthUser(w http.ResponseWriter, r *http.Request) (userID int, err error) {
-	var s session.Store
-	s, err = session.Instance.SessionStart(w, r)
-	if err != nil {
-		return
-	}
-
-	userID, err = Auth(s)
 	return
 }

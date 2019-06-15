@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
+	"github.com/ligenhw/goshare/handler/context"
+
 	"github.com/ligenhw/goshare/auth"
 	"github.com/ligenhw/goshare/session"
 	"github.com/ligenhw/goshare/user"
@@ -25,30 +27,16 @@ func CreateUser(w http.ResponseWriter, r *http.Request) {
 
 // GetUser get current user info, through cookie -> session
 func GetUser(w http.ResponseWriter, r *http.Request) {
-	var err error
-	globalSession := session.Instance
-
-	var session session.Store
-	if session, err = globalSession.SessionStart(w, r); err != nil {
-		handleError(err, w)
-		return
-	}
-
-	var userID int
-	if userID, err = auth.Auth(session); err != nil {
-		handleError(err, w)
-		return
-	}
-
+	userID := *context.UserID(r)
 	user := user.User{Id: userID}
-	if err = user.QueryByID(); err != nil {
+	err := user.QueryByID()
+	if err != nil {
 		handleError(err, w)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	encoder := json.NewEncoder(w)
-	err = encoder.Encode(user)
+	err = json.NewEncoder(w).Encode(user)
 	handleError(err, w)
 	return
 }
@@ -56,31 +44,37 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 // Login add the key 'userID' in current session
 func Login(w http.ResponseWriter, r *http.Request) {
 	var err error
-	var ses session.Store
-	if ses, err = session.Instance.SessionStart(w, r); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
 
 	decoder := json.NewDecoder(r.Body)
 	var user user.User
 	if err = decoder.Decode(&user); err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	if err = auth.Login(user.UserName, user.Password, ses); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if user, err = auth.Check(user.UserName, user.Password); err != nil {
+		handleError(err, w)
+		return
 	}
+
+	ses, err := session.Instance.SessionStart(w, r)
+	if err != nil {
+		handleError(err, w)
+		return
+	}
+	ses.Set("userID", user.Id)
 }
 
 // Logout remove the key 'userID' in current session
+// keep the session
 func Logout(w http.ResponseWriter, r *http.Request) {
-	ses, err := session.Instance.SessionStart(w, r)
+	ses, err := session.Instance.SessionExist(r)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
 	}
 
-	err = auth.Logout(ses)
-	if err != nil {
+	if err = ses.Delete("userID"); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 }

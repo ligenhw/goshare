@@ -2,14 +2,13 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/gorilla/mux"
-	"github.com/ligenhw/goshare/auth"
 	"github.com/ligenhw/goshare/blog"
+	"github.com/ligenhw/goshare/handler/context"
 )
 
 // TODO ; how to handle the error ? goto end
@@ -17,10 +16,10 @@ import (
 // GetArticleByID : get single article and user info
 func GetArticleByID(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	var id int
-	var err error
 
-	if id, err = strconv.Atoi(vars["id"]); err != nil {
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		handleError(err, w)
 		return
 	}
 
@@ -28,6 +27,7 @@ func GetArticleByID(w http.ResponseWriter, r *http.Request) {
 		Blog: blog.Blog{Id: id},
 	}
 	if err = bd.QueryByID(); err != nil {
+		handleError(err, w)
 		return
 	}
 
@@ -84,68 +84,58 @@ func GetArticles(w http.ResponseWriter, r *http.Request) {
 // CreateArticle create a new article .
 // permission: login
 func CreateArticle(w http.ResponseWriter, r *http.Request) {
-	// TODO: close the body
-	var err error
 	b := blog.Blog{}
-	if err = json.NewDecoder(r.Body).Decode(&b); err != nil {
+	err := json.NewDecoder(r.Body).Decode(&b)
+	if err != nil {
+		handleError(err, w)
 		return
 	}
+	b.UserId = *context.UserID(r)
 
 	b.Time = time.Now()
 	err = b.Create()
+	handleError(err, w)
 	return
 }
 
 // UpdateArticle  update a single article
 func UpdateArticle(w http.ResponseWriter, r *http.Request) {
-	var err error
+	userID := *context.UserID(r)
+
 	b := blog.Blog{}
-	if err = json.NewDecoder(r.Body).Decode(&b); err != nil {
+	err := json.NewDecoder(r.Body).Decode(&b)
+	if err != nil {
+		handleError(err, w)
 		return
 	}
-
-	if err = checkBlogOpPermission(w, r, b); err != nil {
+	if err = checkOwnerOpPerm(w, r, b, userID); err != nil {
+		handleError(err, w)
 		return
 	}
 
 	err = b.Update()
-	return
-}
-
-func checkBlogOpPermission(w http.ResponseWriter, r *http.Request, blog blog.Blog) (err error) {
-
-	var userID int
-	userID, err = auth.GetAuthUser(w, r)
-
-	if err = blog.QueryById(); err != nil {
-		return
-	}
-
-	if blog.UserId == userID {
-		err = nil
-	} else {
-		err = fmt.Errorf("do not have blog op permission")
-	}
-
+	handleError(err, w)
 	return
 }
 
 // DeleteArticle  delete a single article, check owner permission
 func DeleteArticle(w http.ResponseWriter, r *http.Request) {
-	var err error
-	var id int
+	userID := *context.UserID(r)
+
 	vars := mux.Vars(r)
 
-	if id, err = strconv.Atoi(vars["id"]); err != nil {
+	id, err := strconv.Atoi(vars["id"])
+	if err != nil {
+		handleError(err, w)
 		return
 	}
-
 	b := blog.Blog{Id: id}
-
-	if err = checkBlogOpPermission(w, r, b); err != nil {
+	if err = checkOwnerOpPerm(w, r, b, userID); err != nil {
+		handleError(err, w)
 		return
 	}
 
 	err = b.Delete()
+	handleError(err, w)
 	return
 }
