@@ -5,11 +5,11 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/ligenhw/goshare/handler/context"
+
 	"github.com/gorilla/mux"
 
-	"github.com/ligenhw/goshare/auth"
 	"github.com/ligenhw/goshare/blog"
-	"github.com/ligenhw/goshare/session"
 	"github.com/ligenhw/goshare/user"
 )
 
@@ -29,25 +29,13 @@ type CreateCommentsReq struct {
 
 // CreateComment create a comment or reply
 func CreateComment(w http.ResponseWriter, r *http.Request) {
-	var err error
-	globalSession := session.Instance
-	var session session.Store
-	if session, err = globalSession.SessionStart(w, r); err != nil {
-		handleError(err, w)
-		return
-	}
+	userID := *context.UserID(r)
 
-	var userID int
-	if userID, err = auth.Auth(session); err != nil {
-		handleError(err, w)
-		return
-	}
-
-	decoder := json.NewDecoder(r.Body)
 	defer r.Body.Close()
-
 	c := CreateCommentsReq{}
-	if err = decoder.Decode(&c); err != nil {
+	var err error
+
+	if err = json.NewDecoder(r.Body).Decode(&c); err != nil {
 		handleError(err, w)
 		return
 	}
@@ -57,16 +45,16 @@ func CreateComment(w http.ResponseWriter, r *http.Request) {
 	} else {
 		_, err = blog.CreateComment(c.BlogID, userID, c.Content)
 	}
+	handleError(err, w)
 
 	return
 }
 
 // GetComment get comment list by blogId
 func GetComment(w http.ResponseWriter, r *http.Request) {
-	var err error
-	var blogID int
 	vars := mux.Vars(r)
-	if blogID, err = strconv.Atoi(vars["blogId"]); err != nil {
+	blogID, err := strconv.Atoi(vars["blogId"])
+	if err != nil {
 		handleError(err, w)
 		return
 	}

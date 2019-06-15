@@ -1,7 +1,7 @@
 swagger: "2.0"
 info:
   description: GoShare项目后端接口文档
-  version: "0.0.3"
+  version: "0.0.4"
   title: "Goshare"
   termsOfService: "https://www.bestlang.cn/"
   contact:
