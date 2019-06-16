@@ -16,16 +16,17 @@
 - [Introduction 介绍 ✨](#introduction-介绍-)
 - [功能 🔥](#功能-)
 - [计划加入的功能 🎉](#计划加入的功能-)
-- [配置 & 环境变量️️ ️⚙️](#配置---环境变量-)
+- [配置 & 环境变量️️ ️⚙️](#配置--环境变量️️-️️)
 - [构建执行 📦](#构建执行-)
-- [Docker方式部署 ✈️](#Docker方式部署-)
-- [Docker Compose 方式部署 🚀](#Docker-Compose-方式部署-)
+- [Docker方式部署 ✈️](#docker方式部署-️)
+- [Docker Compose 方式部署 🚀](#docker-compose-方式部署-)
 - [Show your support ⭐️](#Show-your-support-)
 - [License 📝](#License-)
 
 ## Introduction 介绍 ✨
 
-goshare is a blog web api service by golang.  
+goshare is a blog web api service by golang.
+
 goshare 是基于go标准库实现的 博客后端API服务。
 
 
