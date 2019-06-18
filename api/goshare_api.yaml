@@ -147,6 +147,26 @@ paths:
       responses:
         200:
           description: "successful operation"
+  /archives:
+    get:
+      tags:
+      - "article"
+      summary: 查询文章归档列表
+      description: 查询所有归档文章
+      operationId: GetArchives
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ArchivesResp"
+        405:
+          description: "Invalid input"
   /tag:
     get:
       tags:
@@ -366,8 +386,7 @@ definitions:
         type: integer
         format: int32
       title:
-        type: integer
-        format: int32
+        type: string
       content:
         type: string
       time:
@@ -451,6 +470,17 @@ definitions:
         $ref: '#/definitions/Article'
       user:
         $ref: '#/definitions/User'
+  ArchivesResp:
+    type: object
+    properties:
+      id:
+        type: integer
+        format: int32
+      title:
+        type: string
+      time:
+        type: string
+        format: date-time
   
   CreateCommentsReq:
     type: object
