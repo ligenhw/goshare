@@ -52,11 +52,13 @@ func GetArticles(w http.ResponseWriter, r *http.Request) {
 	var err error
 
 	if limitN, err = getQuery(r, "limit", 0); err != nil {
+		handleError(err, w)
 		return
 	}
 
 	var offsetN int
 	if offsetN, err = getQuery(r, "offset", 0); err != nil {
+		handleError(err, w)
 		return
 	}
 
@@ -64,14 +66,17 @@ func GetArticles(w http.ResponseWriter, r *http.Request) {
 
 	if userIDStr := r.URL.Query().Get("userId"); userIDStr == "" {
 		if result, err = blog.GetAllBlogs(limitN, offsetN); err != nil {
+			handleError(err, w)
 			return
 		}
 	} else {
 		var uid int
 		if uid, err = strconv.Atoi(userIDStr); err != nil {
+			handleError(err, w)
 			return
 		}
 		if result, err = blog.GetArticleByUID(limitN, offsetN, uid); err != nil {
+			handleError(err, w)
 			return
 		}
 	}
@@ -137,5 +142,18 @@ func DeleteArticle(w http.ResponseWriter, r *http.Request) {
 
 	err = b.Delete()
 	handleError(err, w)
+	return
+}
+
+// GetArchives get blogs title and time
+func GetArchives(w http.ResponseWriter, r *http.Request) {
+	result, err := blog.GetArchieves()
+	if err != nil {
+		handleError(err, w)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	err = json.NewEncoder(w).Encode(result)
 	return
 }

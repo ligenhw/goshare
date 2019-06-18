@@ -141,7 +141,7 @@ func (d *dbBase) Read(q *sql.DB, mi *modelInfo, ind reflect.Value, cols []string
 	log.Println(query)
 	log.Println(args)
 
-	refs := newRefs(mi)
+	refs := newRefs(mi, mi.fields.dbcols)
 
 	row := q.QueryRow(query, args...)
 	if err := row.Scan(refs...); err != nil {
@@ -306,10 +306,17 @@ func (d *dbBase) ReadBatch(q *sql.DB, qs *QuerySeter, mi *modelInfo, cond *Condi
 		}
 	}
 
+	var tCols []string
+	if len(cols) > 0 {
+		tCols = cols
+	} else {
+		tCols = mi.fields.dbcols
+	}
+
 	rlimit := qs.limit
 	offset := qs.offset
 
-	sels := strings.Join(mi.fields.dbcols, ", ")
+	sels := strings.Join(tCols, ", ")
 	where, args := getCondSQL(cond)
 	orderBy := getOrderSQL(qs.orders)
 	limit := getLimitSQL(mi, offset, rlimit)
@@ -331,7 +338,7 @@ func (d *dbBase) ReadBatch(q *sql.DB, qs *QuerySeter, mi *modelInfo, cond *Condi
 	defer rs.Close()
 	slice := ind
 
-	refs := newRefs(mi)
+	refs := newRefs(mi, tCols)
 
 	var cnt int64
 	for rs.Next() {
@@ -344,7 +351,7 @@ func (d *dbBase) ReadBatch(q *sql.DB, qs *QuerySeter, mi *modelInfo, cond *Condi
 
 		elm := reflect.New(mi.addrField.Elem().Type())
 		mind := reflect.Indirect(elm)
-		d.setColsValues(mi, &mind, mi.fields.dbcols, refs)
+		d.setColsValues(mi, &mind, tCols, refs)
 		slice = reflect.Append(slice, mind.Addr())
 		cnt++
 	}
@@ -356,12 +363,12 @@ func (d *dbBase) ReadBatch(q *sql.DB, qs *QuerySeter, mi *modelInfo, cond *Condi
 	return cnt, nil
 }
 
-func newRefs(mi *modelInfo) (refs []interface{}) {
-	colsNum := len(mi.fields.dbcols)
+func newRefs(mi *modelInfo, cols []string) (refs []interface{}) {
+	colsNum := len(cols)
 	refs = make([]interface{}, colsNum)
 	for i := range refs {
 		// var ref interface{}
-		column := mi.fields.dbcols[i]
+		column := cols[i]
 		fi := mi.fields.GetByColumn(column)
 		switch fi.typ.Kind() {
 		case reflect.Int:

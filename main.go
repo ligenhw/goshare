@@ -44,6 +44,7 @@ func main() {
 	r.HandleFunc("/api/article", u(handler.UpdateArticle)).Methods("PUT")
 	r.HandleFunc("/api/article/{id}", handler.GetArticleByID).Methods("GET")
 	r.HandleFunc("/api/article/{id}", u(handler.DeleteArticle)).Methods("DELETE")
+	r.HandleFunc("/api/archives", handler.GetArchives).Methods("GET")
 
 	r.HandleFunc("/api/comment/{blogId}", handler.GetComment).Methods("GET")
 	r.HandleFunc("/api/comment", u(handler.CreateComment)).Methods("POST")

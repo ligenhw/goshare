@@ -59,6 +59,15 @@ func GetAllBlogs(limit, offset int) (blogs []*Blog, err error) {
 	return
 }
 
+// GetArchieves get all article title
+func GetArchieves() (blogs []*Blog, err error) {
+	sel := []string{"id", "title", "time"}
+	blogs = make([]*Blog, 0)
+	qb := o.QueryTable(new(Blog))
+	_, err = qb.OrderBy("-time").All(&blogs, sel...)
+	return
+}
+
 func GetArticleByUID(limit, offset, uid int) (blogs []*Blog, err error) {
 	blogs = make([]*Blog, 0)
 	qb := o.QueryTable(new(Blog))
