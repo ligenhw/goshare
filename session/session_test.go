@@ -5,7 +5,7 @@ import (
 )
 
 func TestStore(t *testing.T) {
-	globalSession, _ := NewManager("mem")
+	globalSession, _ := NewManager("mem", "")
 	go globalSession.GC()
 
 	sid, _ := globalSession.sessionID()
