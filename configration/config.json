@@ -1,5 +1,6 @@
 {
     "Address"        : ":8080",
+    "SavePath"       : "192.168.199.230:6379,10,60",
     "ReadTimeout"    : 10,
     "WriteTimeout"   : 600,
     "Dsn": "root:@tcp(127.0.0.1)/goshare?charset=utf8&parseTime=true",

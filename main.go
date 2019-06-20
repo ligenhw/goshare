@@ -10,6 +10,7 @@ import (
 	"github.com/ligenhw/goshare/configration"
 	"github.com/ligenhw/goshare/handler"
 	"github.com/ligenhw/goshare/session"
+	_ "github.com/ligenhw/goshare/session/redis"
 	"github.com/ligenhw/goshare/version"
 )
 
@@ -20,7 +21,7 @@ var (
 func init() {
 	log.SetFlags(log.Flags() | log.Llongfile)
 
-	globalSession, _ = session.NewManager("mem")
+	globalSession, _ = session.NewManager("redis", configration.Conf.SavePath)
 	go globalSession.GC()
 }
 

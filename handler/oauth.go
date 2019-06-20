@@ -35,6 +35,7 @@ func OauthLogin(authFunc func(code string) (id int, err error)) http.HandlerFunc
 			return
 		}
 		ses.Set("userID", uid)
+		ses.SessionRelease()
 	}
 }
 

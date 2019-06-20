@@ -10,6 +10,7 @@ import (
 
 type Config struct {
 	Address      string
+	SavePath     string
 	ReadTimeout  int64
 	WriteTimeout int64
 	Dsn          string
@@ -54,5 +55,9 @@ func loadEnv() {
 	if addr, ok := os.LookupEnv("PORT"); ok {
 		Conf.Address = addr
 		log.Println("load from env addr : ", addr)
+	}
+	if savepath, ok := os.LookupEnv("SAVEPATH"); ok {
+		Conf.SavePath = savepath
+		log.Println("load from env savepath : ", savepath)
 	}
 }

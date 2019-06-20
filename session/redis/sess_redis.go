@@ -1,7 +1,11 @@
 package redis
 
 import (
+	"log"
+	"strconv"
+	"strings"
 	"sync"
+	"time"
 
 	"github.com/ligenhw/goshare/session"
 
@@ -53,32 +57,111 @@ func (rs *SessionStore) SessionID() string {
 	return rs.sid
 }
 
-// --- provider ---
+// SessionRelease save to redis and set the expire time.
+func (rs *SessionStore) SessionRelease() {
+	b, err := session.EncodeGob(rs.values)
+	if err != nil {
+		return
+	}
+	c := rs.p.Get()
+	defer c.Close()
+	if _, err := redis.Int(c.Do("SETEX", rs.sid, rs.maxlifetime, string(b))); err != nil {
+		log.Println(err)
+	}
+}
 
+// Provider redis session provider
 type Provider struct {
+	maxlifetime int64
+	savePath    string
+	poolsize    int
+	password    string
+	dbNum       int
+	poollist    *redis.Pool
 }
 
-// SessionInit init memory session
-func (rp *Provider) SessionInit(maxlifetime int64) error {
-	// rp.maxlifetime = maxlifetime
-	return nil
+// SessionInit init redis session
+// savepath like redis server addr,pool size,IdleTimeout second
+// e.g. 127.0.0.1:6379,10,60
+func (rp *Provider) SessionInit(maxlifetime int64, savePath string) error {
+	rp.maxlifetime = maxlifetime
+	configs := strings.Split(savePath, ",")
+	if len(configs) > 0 {
+		rp.savePath = configs[0]
+	}
+	if len(configs) > 1 {
+		poolsize, err := strconv.Atoi(configs[1])
+		if err != nil || poolsize < 0 {
+			rp.poolsize = MaxPoolSize
+		} else {
+			rp.poolsize = poolsize
+		}
+	} else {
+		rp.poolsize = MaxPoolSize
+	}
+	var idleTimeout time.Duration
+	if len(configs) > 2 {
+		timeout, err := strconv.Atoi(configs[2])
+		if err == nil && timeout > 0 {
+			idleTimeout = time.Duration(timeout) * time.Second
+		}
+	}
+	rp.poollist = &redis.Pool{
+		Dial: func() (redis.Conn, error) {
+			c, err := redis.Dial("tcp", rp.savePath)
+			if err != nil {
+				return nil, err
+			}
+			return c, err
+		},
+		MaxIdle: rp.poolsize,
+	}
+
+	rp.poollist.IdleTimeout = idleTimeout
+
+	return rp.poollist.Get().Err()
 }
 
-// SessionInit init memory session
+// SessionRead read redis session by sid
 func (rp *Provider) SessionRead(sid string) (session.Store, error) {
-	// rp.maxlifetime = maxlifetime
-	return nil, nil
+	c := rp.poollist.Get()
+	defer c.Close()
+
+	var kv map[interface{}]interface{}
+
+	kvs, err := redis.String(c.Do("GET", sid))
+	if err != nil && err != redis.ErrNil {
+		return nil, err
+	}
+	if len(kvs) == 0 {
+		kv = make(map[interface{}]interface{})
+	} else {
+		if kv, err = session.DecodeGob([]byte(kvs)); err != nil {
+			return nil, err
+		}
+	}
+
+	rs := &SessionStore{p: rp.poollist, sid: sid, values: kv, maxlifetime: rp.maxlifetime}
+	return rs, nil
 }
 
-// SessionExist init memory session
+// SessionExist check redis session exist by sid
 func (rp *Provider) SessionExist(sid string) bool {
-	// rp.maxlifetime = maxlifetime
-	return false
+	c := rp.poollist.Get()
+	defer c.Close()
+
+	if existed, err := redis.Int(c.Do("EXISTS", sid)); err != nil || existed == 0 {
+		return false
+	}
+	return true
 }
 
-// SessionGC init memory session
+// SessionDestroy delete redis session by id
 func (rp *Provider) SessionDestroy(sid string) error {
-	// rp.maxlifetime = maxlifetime
+	c := rp.poollist.Get()
+	defer c.Close()
+
+	c.Do("DEL", sid)
 	return nil
 }
 

@@ -17,10 +17,12 @@ type Store interface {
 	Get(key interface{}) interface{}  //get session value
 	Delete(key interface{}) error     //delete session value
 	SessionID() string                //back current sessionID
+	SessionRelease()                  // release the resource & save data to provider & return the data
 }
 
+// Provider the implements of session
 type Provider interface {
-	SessionInit(gclifetime int64) error
+	SessionInit(gclifetime int64, savepath string) error
 	SessionRead(sid string) (Store, error)
 	SessionExist(sid string) bool
 	SessionDestroy(sid string) error
@@ -29,6 +31,7 @@ type Provider interface {
 
 var provides = make(map[string]Provider)
 
+// Register a provider
 func Register(name string, provider Provider) {
 	if provider == nil {
 		panic("session: Register provide is nil")
@@ -40,9 +43,9 @@ func Register(name string, provider Provider) {
 	provides[name] = provider
 }
 
+// Manager manage the different session provider
 type Manager struct {
-	provider Provider
-
+	provider       Provider
 	CookieName     string
 	CookieLifeTime int
 	Gclifetime     int64
@@ -52,7 +55,8 @@ type Manager struct {
 var Instance *Manager
 var instanceLock sync.Mutex = sync.Mutex{}
 
-func NewManager(provideName string) (*Manager, error) {
+// NewManager manager the session through a special provider
+func NewManager(provideName string, config string) (*Manager, error) {
 	provider, ok := provides[provideName]
 	if !ok {
 		return nil, fmt.Errorf("type %s no register, do you forget import ?", provideName)
@@ -62,7 +66,7 @@ func NewManager(provideName string) (*Manager, error) {
 
 	if Instance == nil {
 		defaultTime := int64(60 * 30)
-		provider.SessionInit(defaultTime)
+		provider.SessionInit(defaultTime, config)
 
 		Instance = &Manager{
 			provider:       provider,
@@ -75,6 +79,7 @@ func NewManager(provideName string) (*Manager, error) {
 	return Instance, nil
 }
 
+// GetProvider get the current provider
 func (manager *Manager) GetProvider() Provider {
 	return manager.provider
 }

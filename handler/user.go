@@ -63,6 +63,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	ses.Set("userID", user.Id)
+	ses.SessionRelease()
 }
 
 // Logout remove the key 'userID' in current session
@@ -76,5 +77,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 
 	if err = ses.Delete("userID"); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+	ses.SessionRelease()
 }

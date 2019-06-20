@@ -47,6 +47,11 @@ func (st *MemSessionStore) SessionID() string {
 	return st.sid
 }
 
+// SessionRelease do nothing
+func (st *MemSessionStore) SessionRelease() {
+}
+
+// MemProvider session implements by memory
 type MemProvider struct {
 	lock        sync.RWMutex             // locker
 	sessions    map[string]*list.Element // map in memory
@@ -55,7 +60,7 @@ type MemProvider struct {
 }
 
 // SessionInit init memory session
-func (pder *MemProvider) SessionInit(maxlifetime int64) error {
+func (pder *MemProvider) SessionInit(maxlifetime int64, savepath string) error {
 	pder.maxlifetime = maxlifetime
 	return nil
 }
