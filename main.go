@@ -4,14 +4,14 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/ligenhw/goshare/handler/middleware"
-
 	"github.com/gorilla/mux"
 	"github.com/ligenhw/goshare/configration"
 	"github.com/ligenhw/goshare/handler"
+	"github.com/ligenhw/goshare/handler/middleware"
 	"github.com/ligenhw/goshare/session"
-	_ "github.com/ligenhw/goshare/session/redis"
 	"github.com/ligenhw/goshare/version"
+
+	_ "github.com/ligenhw/goshare/session/redis"
 )
 
 var (

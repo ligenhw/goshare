@@ -44,6 +44,9 @@ func CheckUser(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
+		// update the session expire time
+		session.SessionRelease()
+
 		r = context.SetUserID(r, userID)
 
 		next.ServeHTTP(w, r)
