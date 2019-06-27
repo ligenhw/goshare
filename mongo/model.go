@@ -1,4 +1,4 @@
-package link
+package mongo
 
 // Link friend link model
 type Link struct {
@@ -6,4 +6,3 @@ type Link struct {
 	Url  string `json:"url"`
 	Img  string `json:"img"`
 }
-

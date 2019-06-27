@@ -22,6 +22,8 @@ tags:
   description: 评论
 - name: oauth
   description: 三方登录
+- name: link
+  description: 友链
 schemes:
 - "https"
 paths:
@@ -373,6 +375,27 @@ paths:
       responses:
         200:
           description: "successful operation"
+  
+  /link:
+    get:
+      tags:
+      - link
+      summary: 查询友链
+      description: 查询所有友链
+      operationId: GetLinks
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Link"
+        405:
+          description: "Invalid input"
 
 # model define
 definitions:
@@ -511,4 +534,15 @@ definitions:
     properties:
       code: 
         type: string
+  
+  Link:
+    type: object
+    properties:
+      name: 
+        type: string
+      url: 
+        type: string
+      img: 
+        type: string
+  
   

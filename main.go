@@ -8,7 +8,7 @@ import (
 	"github.com/ligenhw/goshare/configration"
 	"github.com/ligenhw/goshare/handler"
 	"github.com/ligenhw/goshare/handler/middleware"
-	"github.com/ligenhw/goshare/link"
+	"github.com/ligenhw/goshare/mongo"
 	"github.com/ligenhw/goshare/session"
 	"github.com/ligenhw/goshare/version"
 
@@ -57,7 +57,7 @@ func main() {
 	r.HandleFunc("/api/qqlogin", handler.QqLogin).Methods("POST")
 	r.HandleFunc("/api/alipaylogin", handler.AlipayLogin).Methods("POST")
 
-	r.HandleFunc("/api/link", link.GetLinks).Methods("GET")
+	r.HandleFunc("/api/link", mongo.GetLinks).Methods("GET")
 
 	http.Handle("/", r)
 
