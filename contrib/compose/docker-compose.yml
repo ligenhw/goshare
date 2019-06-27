@@ -15,9 +15,11 @@ goshare:
   environment:
     DSN: "root:123@tcp(db)/goshare?charset=utf8mb4&parseTime=true"
     SAVEPATH: "redis:6379,10,60"
+    MONGODBURI: "mongodb://mongo:27017"
   links:
     - db:db
     - redis:redis
+    - mongo:mongo
 db:
   image: mysql
   ports:
@@ -28,3 +30,7 @@ redis:
   image: redis
   ports:
     - "6379"
+mongo:
+  image: mongo
+  ports:
+    - "27017"

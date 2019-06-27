@@ -1,10 +1,11 @@
 FROM golang
 
-ENV APP_DIR $GOPATH/src/github.com/ligenhw/goshare
+ENV APP_DIR goshare
+ENV GOPROXY https://goproxy.io
 
 ADD . $APP_DIR
 WORKDIR $APP_DIR
-RUN go get ./... && go install github.com/ligenhw/goshare
+RUN export GOPROXY=https://goproxy.io && go get -v ./... && go install
 ENTRYPOINT $GOPATH/bin/goshare
 
 EXPOSE 8080

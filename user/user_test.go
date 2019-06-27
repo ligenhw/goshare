@@ -1,6 +1,7 @@
 package user
 
 import (
+	"fmt"
 	"testing"
 )
 

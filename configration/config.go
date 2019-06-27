@@ -8,9 +8,11 @@ import (
 	"runtime"
 )
 
+// Config system config
 type Config struct {
 	Address      string
 	SavePath     string
+	MongoDbURI   string
 	ReadTimeout  int64
 	WriteTimeout int64
 	Dsn          string
@@ -18,6 +20,7 @@ type Config struct {
 	ClientSecret string
 }
 
+// Conf system configuration
 var Conf Config
 
 func init() {
@@ -59,5 +62,9 @@ func loadEnv() {
 	if savepath, ok := os.LookupEnv("SAVEPATH"); ok {
 		Conf.SavePath = savepath
 		log.Println("load from env savepath : ", savepath)
+	}
+	if mongodburi, ok := os.LookupEnv("MONGODBURI"); ok {
+		Conf.MongoDbURI = mongodburi
+		log.Println("load from env mongodburi : ", mongodburi)
 	}
 }
