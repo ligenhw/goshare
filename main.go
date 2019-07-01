@@ -58,6 +58,8 @@ func main() {
 	r.HandleFunc("/api/alipaylogin", handler.AlipayLogin).Methods("POST")
 
 	r.HandleFunc("/api/link", mongo.GetLinks).Methods("GET")
+	r.HandleFunc("/api/book", mongo.GetBooks).Methods("GET")
+	r.HandleFunc("/api/project", mongo.GetProjects).Methods("GET")
 
 	http.Handle("/", r)
 

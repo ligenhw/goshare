@@ -24,6 +24,10 @@ tags:
   description: 三方登录
 - name: link
   description: 友链
+- name: book
+  description: 书籍
+- name: project
+  description: 项目
 schemes:
 - "https"
 paths:
@@ -396,6 +400,47 @@ paths:
               $ref: "#/definitions/Link"
         405:
           description: "Invalid input"
+  
+  /book:
+    get:
+      tags:
+      - book
+      summary: 查询书籍
+      description: 查询所有书籍
+      operationId: GetBooks
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Book"
+        405:
+          description: "Invalid input"
+  /project:
+    get:
+      tags:
+      - project
+      summary: 查询项目
+      description: 查询所有项目
+      operationId: GetProjects
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "successful operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Project"
+        405:
+          description: "Invalid input"
 
 # model define
 definitions:
@@ -541,6 +586,32 @@ definitions:
       name: 
         type: string
       url: 
+        type: string
+      img: 
+        type: string
+  
+  Book:
+    type: object
+    properties:
+      title: 
+        type: string
+      subTitle: 
+        type: string
+      href: 
+        type: string
+      img: 
+        type: string
+      code:
+        type: string
+  
+  Project:
+    type: object
+    properties:
+      title: 
+        type: string
+      subTitle: 
+        type: string
+      href: 
         type: string
       img: 
         type: string

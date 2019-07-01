@@ -9,15 +9,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var (
-	link *mongo.Collection
-)
-
-func init() {
+func getDb() *mongo.Database {
 	client, err := mongo.NewClient(options.Client().ApplyURI(configration.Conf.MongoDbURI))
 	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	if err = client.Connect(ctx); err != nil {
 		panic(err)
 	}
-	link = client.Database("goshare").Collection("link")
+	return client.Database("goshare")
 }
