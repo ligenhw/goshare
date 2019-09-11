@@ -2,6 +2,7 @@ package blog
 
 import (
 	"testing"
+	"time"
 
 	"github.com/ligenhw/goshare/user"
 )
@@ -24,6 +25,7 @@ func TestBlog(t *testing.T) {
 		UserId:  u.Id,
 		Title:   "testblog",
 		Content: "testblog_content",
+		Time:    time.Now(),
 	}
 	if err := b.Create(); err != nil {
 		t.Error(err)
@@ -73,4 +75,3 @@ func TestBlog(t *testing.T) {
 		t.Error(err)
 	}
 }
-
