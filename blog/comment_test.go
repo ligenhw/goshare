@@ -51,7 +51,7 @@ func TestComment(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	if _, err := CreateComment(b.Id, u.Id, "test Comment3🐟"); err != nil {
+	if _, err := CreateComment(b.Id, u.Id, "test Comment3"); err != nil {
 		t.Fatal(err)
 	}
 
